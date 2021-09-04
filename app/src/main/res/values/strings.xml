@@ -39,7 +39,7 @@
     <string name="btn_agregar_gestionar_clase">Agregar</string>
     <string name="btn_cancelar_gestionar_clase">Cancelar</string>
 
-    <string name="txt_indicacion_solicitar_clase">Solicitar clase</string>
+    <string name="txt_indicacion_solicitar_clase">Ingresar clase</string>
     <string name="txt_materia_solicitar_clase">Materia</string>
     <string name="txt_alumno_solicitar_clase">Alumno</string>
     <string name="txt_tema_solicitar_clase">Tema</string>
@@ -89,8 +89,8 @@
     <string name="txt_indicacion_editar_perfil">Editar perfil</string>
     <string name="btn_guardar_editar_perfil">Guardar</string>
 
-    <string name="txt_titulo_fecha_clase">Solicitar clase</string>
-    <string name="txt_titulo_hora_clase">Solicitar clase</string>
+    <string name="txt_titulo_fecha_clase">Ingresar clase</string>
+    <string name="txt_titulo_hora_clase">Ingresar clase</string>
     <string name="btn_guardar_hora_clase">Aceptar</string>
     <string name="txt_desc_guardar_hora_clase"> ¿A que hora tienes la clase? </string>
     <string name="txt_desc_guardar_fecha_clase"> ¿Cuándo tienes la clase? </string>
