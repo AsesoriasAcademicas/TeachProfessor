@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    tools:context=".EditarPerfilActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:weightSum="100"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt_titulo_editar_perfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="@string/txt_indicacion_editar_perfil"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_moneda_editar_perfil"
+            android:layout_width="36dp"
+            android:layout_height="46dp"
+            android:layout_weight="50"
+            android:layout_toRightOf="@+id/txt_titulo_editar_perfil"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:filterTouchesWhenObscured="false"
+            app:srcCompat="@drawable/ic_baseline_monetization_on_24" />
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:hint="@string/txt_nombre_editar_perfil"
+        android:autofillHints="@string/txt_nombre_editar_perfil">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txt_nombre_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:focusableInTouchMode="true"
+            android:focusable="true"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/txt_telefono_editar_perfil"
+        android:autofillHints="@string/txt_telefono_editar_perfil">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txt_telefono_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="phone"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/txt_direccion_editar_perfil"
+        android:autofillHints="@string/txt_direccion_editar_perfil">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txt_direccion_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
+        android:hint="@string/txt_password_editar_perfil"
+        android:autofillHints="@string/txt_password_editar_perfil">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txt_password_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
+        android:hint="@string/txt_repet_password_editar_perfil"
+        android:autofillHints="@string/txt_repet_password_editar_perfil">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txt_repet_password_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_guardar_editar_perfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_guardar_editar_perfil" />
+
+    <Button
+        android:id="@+id/btn_cancelar_editar_perfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_cancelar_registration" />
+
+</LinearLayout>
+    </ScrollView>

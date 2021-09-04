@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        tools:context=".EditarClaseActivity">
+
+        <TextView
+            android:id="@+id/txt_titulo_editar_clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_editar_class"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:layout_marginTop="8dp"
+            android:text="@string/txt_desc_editar_clase" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/txt_materia_editar_clase">
+
+            <AutoCompleteTextView
+                android:id="@+id/spn_materia_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:cursorVisible="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/txt_tema_editar_clase">
+
+            <AutoCompleteTextView
+                android:id="@+id/spn_tema_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/txt_fecha_editar_clase"
+                android:autofillHints="@string/txt_fecha_editar_clase">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_fecha_editar_clase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="date"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/img_fecha_editar_clase"
+                android:layout_width="36dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:layout_alignParentRight="true"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_calendar_today_black_18dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbtn_no_recurrente_editar_clase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clase no recurrente"
+                    android:checked="true"/>
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbtn_recurrente_editar_clase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clase recurrente" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/checkbox_days_editar_clase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_lunes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="L">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_martes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M"
+                    android:layout_toEndOf="@id/checkbox_lunes">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_miercoles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M"
+                    android:layout_toRightOf="@+id/checkbox_martes">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_jueves"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="J"
+                    android:layout_toRightOf="@+id/checkbox_miercoles">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_viernes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="V"
+                    android:layout_toRightOf="@+id/checkbox_jueves">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_sabado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="S"
+                    android:layout_toRightOf="@+id/checkbox_viernes">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkbox_domingo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="D"
+                    android:layout_toRightOf="@+id/checkbox_sabado">
+
+                </com.google.android.material.checkbox.MaterialCheckBox>
+
+            </RelativeLayout>
+        </HorizontalScrollView>
+
+        <RelativeLayout
+            android:id="@+id/fecha_fin_editar_clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:autofillHints="@string/txt_fecha_fin_editar_clase"
+                android:hint="@string/txt_fecha_fin_editar_clase">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_fecha_fin_editar_clase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:inputType="date" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/img_fecha_fin_editar_clase"
+                android:layout_width="36dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:filterTouchesWhenObscured="false"
+                android:layout_alignParentRight="true"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_calendar_today_black_18dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/txt_hora_editar_clase"
+                android:autofillHints="@string/txt_hora_editar_clase">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_hora_editar_clase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="time"
+                    android:layout_alignParentLeft="true"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/img_hora_editar_clase"
+                android:layout_width="36dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:layout_alignParentRight="true"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_schedule_black_18dp" />
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/txt_inquietudes_editar_clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/txt_inquietudes_editar_clase"
+            android:ems="10"
+            android:hint="@string/txt_inquietudes_editar_clase"
+            android:inputType="textMultiLine"
+            android:lines="20"
+            android:minLines="2"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:gravity="bottom" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/img_disminuir_duracion_editar_clase"
+                android:layout_width="36dp"
+                android:layout_height="46dp"
+                android:layout_marginRight="8dp"
+                android:clickable="true"
+                android:layout_alignParentLeft="true"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_remove_circle_black_18dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/txt_layout_duracion_editar_clase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/txt_duracion_editar_clase"
+                android:autofillHints="@string/txt_duracion_editar_clase"
+                android:layout_toRightOf="@id/img_disminuir_duracion_editar_clase">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_duracion_editar_clase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/img_aumentar_duracion_editar_clase"
+                android:layout_width="36dp"
+                android:layout_height="46dp"
+                android:layout_marginLeft="8dp"
+                android:clickable="true"
+                android:layout_alignParentRight="true"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_add_circle_black_18dp"
+                android:layout_toRightOf="@id/txt_layout_duracion_editar_clase"/>/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_guardar_editar_clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_guardar_editar_clase" />
+
+        <Button
+            android:id="@+id/btn_cancelar_editar_clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cancelar_registration" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,134 @@
+<resources>
+    <string name="app_name">Teach</string>
+    <string name="txt_email_login">Email</string>
+    <string name="txt_password_login">Password</string>
+    <string name="txt_indicacion_login">Iniciar Sesión</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_registrarse_login">Registrarse</string>
+    <string name="img_descipcion">Imagen Login</string>
+    <string name="txt_terminos_condiciones">
+        <![CDATA[
+        TÉRMINOS Y CONDICIONES DE USO DE LA APP TEACH\n\n
+        1. Estos Términos y Condiciones de Uso regulan las reglas a que se sujeta la utilización de la APP Teach. La descarga o utilización de la APP atribuye la condición de Usuario a quien lo haga e implica la aceptación de todas las condiciones incluidas en este documento y en la Política de Privacidad y el Aviso Legal de dicha APP. El Usuario debería leer estas condiciones cada vez que utilice la APP, ya que podrían ser modificadas en lo sucesivo.\n\n
+        2. Únicamente los Usuarios expresamente autorizados por Asesorías Académicas podrán acceder a la descarga y uso de la APP. Los Usuarios que no dispongan de autorización, no podrán acceder a dicho contenido.\n\n
+        3. Cargos: Eres responsable del pago de todos los costes o gastos en los que incurras como resultado de descargar y usar la Aplicación de Asesorías Académicas, incluido cualquier cargo de red de operador o itinerancia. Consulta con tu proveedor de servicios los detalles al respecto.\n\n
+        4. Estadísticas anónimas: Asesorías Académicas se reserva el derecho a realizar un seguimiento de tu actividad en la Aplicación y a informar de ello a nuestros proveedores de servicios estadísticos de terceros. Todo ello de forma anónima.\n\n
+        5. Protección de tu información personal: Queremos ayudarte a llevar a cabo todos los pasos necesarios para proteger tu privacidad e información. Consulta la Política de privacidad de Asesorías Académicas y los avisos sobre privacidad de la Aplicación para conocer qué tipo de información recopilamos y las medidas que tomamos para proteger tu información personal.\n\n
+        6. Queda prohibido alterar o modificar ninguna parte de la APP a de los contenidas de la misma, eludir, desactivar o manipular de cualquier otra forma las funciones de seguridad u otras funciones del programa y utilizar la APP o sus contenidos para un fin comercial o publicitario. Queda prohibido el uso de la APP con la finalidad de lesionar bienes, derechos o intereses de Asesorías Académicas o de terceros. Queda igualmente prohibido realizar cualquier otro uso que altere, dañe o inutilice las redes, servidores, equipos, productos y programas informáticos de Asesorías Académicas o de terceros.\n\n
+        7. La APP y sus contenidos (textos, fotografías, gráficos, imágenes, tecnología, software, links, contenidos, diseño gráfico, código fuente, etc.), así como las marcas y demás signos distintivos son propiedad de Asesorías Académicas o de terceros, no adquiriendo el Usuario ningún derecho sobre ellos por el mero uso de la APP. El Usuario, deberá abstenerse de:\n\n
+        \ta)	Reproducir, copiar, distribuir, poner a disposición de terceros, comunicar públicamente, transformar o modificar la APP o sus contenidos, salvo en los casos contemplados en la ley o expresamente autorizados por Asesorías Académicas o por el titular de dichos derechos.\n\n
+        \tb)	Reproducir o copiar para uso privado la APP o sus contenidos, así como comunicarlos públicamente o ponerlos a disposición de terceros cuando ello conlleve su reproducción.\n\n
+        \tc)	Extraer o reutilizar todo o parte sustancial de los contenidos integrantes de la APP.\n\n
+        8. Con sujeción a las condiciones establecidas en el apartado anterior, Asesorías Académicas concede al Usuario una licencia de uso de la APP, no exclusiva, gratuita, para uso personal, circunscrita al territorio nacional y con carácter indefinido. Dicha licencia se concede también en los mismos términos con respecto a las actualizaciones y mejoras que se realizasen en la aplicación. Dichas licencias de uso podrán ser revocadas por Asesorías Académicas unilateralmente en cualquier momento, mediante la mera notificación al Usuario.\n\n
+        9. Corresponde al Usuario, en todo caso, disponer de herramientas adecuadas para la detección y desinfección de programas maliciosos o cualquier otro elemento informático dañino. Asesorías Académicas no se responsabiliza de los daños producidos a equipos informáticos durante el uso de la APP. Igualmente, Asesorías Académicas no será responsable de los daños producidos a los Usuarios cuando dichos daños tengan su origen en fallos o desconexiones en las redes de telecomunicaciones que interrumpan el servicio.\n\n
+        10. IMPORTANTE: Podemos, sin que esto suponga ninguna obligación contigo, modificar estas Condiciones de uso sin avisar en cualquier momento. Si continúas utilizando la aplicación una vez realizada cualquier modificación en estas Condiciones de uso, esa utilización continuada constituirá la aceptación por tu parte de tales modificaciones. Si no aceptas estas condiciones de uso ni aceptas quedar sujeto a ellas, no debes utilizar la aplicación ni descargar o utilizar cualquier software relacionado. El uso que hagas de la aplicación queda bajo tu única responsabilidad. No tenemos responsabilidad alguna por la eliminación o la incapacidad de almacenar o trasmitir cualquier contenido u otra información mantenida o trasmitida por la aplicación. No somos responsables de la precisión o la fiabilidad de cualquier información o consejo trasmitidos a través de la aplicación. Podemos, en cualquier momento, limitar o interrumpir tu uso a nuestra única discreción. Hasta el máximo que permite la ley, en ningún caso seremos responsables por cualquier pérdida o daño relacionados.\n\n
+        11. El Usuario se compromete a hacer un uso correcto de la APP, de conformidad con la Ley, con los presentes Términos y Condiciones de Uso y con las demás reglamentos e instrucciones que, en su caso, pudieran ser de aplicación El Usuario responderá frente a Asesorías Académicas y frente a terceros de cualesquiera daños o perjuicios que pudieran causarse por incumplimiento de estas obligaciones.\n\n
+        12. Estos Términos y Condiciones de Uso se rigen íntegramente por la legislación colombiana. Para la resolución de cualquier conflicto relativo a su interpretación o aplicación, el Usuario se somete a los jueces de la República de Colombia.
+        ]]>
+    </string>
+
+    <string name="txt_nombre_registration">Nombre</string>
+    <string name="txt_email_registration">Email</string>
+    <string name="txt_password_registration">Contraseña</string>
+    <string name="txt_repet_password_registration">Repite tu contraseña</string>
+    <string name="btn_registrarse_registration">Registrarse</string>
+    <string name="btn_cancelar_registration">Cancelar</string>
+    <string name="txt_indicacion_registration">¡Ya estás a un paso!</string>
+    <string name="txt_indicacion_completa_registration">Por favor, ingresa tus datos para completar el registro de tu cuenta.</string>
+
+    <string name="btn_agregar_gestionar_clase">Agregar</string>
+    <string name="btn_cancelar_gestionar_clase">Cancelar</string>
+
+    <string name="txt_indicacion_solicitar_clase">Solicitar clase</string>
+    <string name="txt_materia_solicitar_clase">Materia</string>
+    <string name="txt_alumno_solicitar_clase">Alumno</string>
+    <string name="txt_tema_solicitar_clase">Tema</string>
+    <string name="txt_indicacion_desc_solicitar_clase">¡Falta poco!</string>
+    <string name="txt_desc_tema_solicitar_clase">En la clase usted comprenderá los principios
+        básicos de la temática, apoyado en ejemplos prácticos que le ayudarán a interiorizar
+        mejor los conceptos.</string>
+    <string name="txt_inquietudes_solicitar_clase">¿Que dudas presenta el estudiante en relación al tema en particular?</string>
+    <string name="txt_fecha_solicitar_clase">Fecha</string>
+    <string name="txt_fecha_fin_solicitar_clase">Fecha fin</string>
+    <string name="txt_hora_solicitar_clase">Hora</string>
+    <string name="txt_duracion_solicitar_clase">Duracion</string>
+    <string name="txt_duracion_solicitar_clase_x_defecto">0</string>
+    <string name="btn_guardar_solicitar_clase">Guardar</string>
+    <string name="swt_estado_solicitar_clase">Estado</string>
+    <string name="txt_desc_solicitar_clase">Por favor ingresa algunos campos necesarios para completar el registro de la clase.</string>
+
+    <string name="txt_listaClase_clase">Lista clases</string>
+    <string name="btn_listado_clases">Cancelar</string>
+
+    <string name="txt_detalle_class">Detalle clase</string>
+    <string name="btn_eliminar_class">Eliminar</string>
+    <string name="btn_editar_class">Editar</string>
+    <string name="txv_etiqueta_duracion_detalle_clase">Duración:</string>
+    <string name="txv_etiqueta_fecha_detalle_clase">Fecha:</string>
+    <string name="txv_etiqueta_hora_detalle_clase">Hora:</string>
+    <string name="txv_etiqueta_tiempo_detalle_clase">hora (s)</string>
+    <string name="txv_progreso_detalle_clase">Progreso</string>
+
+    <string name="txt_editar_class">Editar clase</string>
+    <string name="txt_materia_editar_clase">Materia</string>
+    <string name="txt_tema_editar_clase">Tema</string>
+    <string name="txt_desc_editar_clase">Por favor modifique los campos deseados para completar la edición de la clase.</string>
+    <string name="txt_inquietudes_editar_clase">¿Que dudas presenta el estudiante en relación al tema en particular?</string>
+    <string name="txt_fecha_editar_clase">Fecha</string>
+    <string name="txt_fecha_fin_editar_clase">Fecha fin</string>
+    <string name="txt_hora_editar_clase">Hora</string>
+    <string name="txt_duracion_editar_clase">Duracion</string>
+    <string name="btn_guardar_editar_clase">Guardar</string>
+
+    <string name="txt_nombre_editar_perfil">Nombre</string>
+    <string name="txt_email_editar_perfil">Email</string>
+    <string name="txt_telefono_editar_perfil">Telefono</string>
+    <string name="txt_direccion_editar_perfil">Direccion</string>
+    <string name="txt_password_editar_perfil">Contraseña</string>
+    <string name="txt_repet_password_editar_perfil">Repite tu contraseña</string>
+    <string name="txt_indicacion_editar_perfil">Editar perfil</string>
+    <string name="btn_guardar_editar_perfil">Guardar</string>
+
+    <string name="txt_titulo_fecha_clase">Solicitar clase</string>
+    <string name="txt_titulo_hora_clase">Solicitar clase</string>
+    <string name="btn_guardar_hora_clase">Aceptar</string>
+    <string name="txt_desc_guardar_hora_clase"> ¿A que hora tienes la clase? </string>
+    <string name="txt_desc_guardar_fecha_clase"> ¿Cuándo tienes la clase? </string>
+
+    <string name="txt_desc_ganancias">Ingresos</string>
+    <string name="txt_fecha_inicio_ganancias">Fecha inicio</string>
+    <string name="txt_fecha_fin_ganancias">Fecha fin</string>
+    <string name="txt_detalle_ganancias">Ganancias:</string>
+    <string name="txt_detalle_fondo">Fondo:</string>
+    <string name="txt_detalle_total">Total:</string>
+    <string name="txt_descipcion_ganancias">A continuación usted encontrará el detalle de los movimientos relacionados con sus clases.</string>
+    <string name="btn_calcular_ganancias">Calcular</string>
+
+    <string name="txt_Horario">Horario</string>
+    <string name="txt_Alumnos">Alumnos</string>
+
+    <string name="txt_listaAlumno_alumnos_alumno">Lista alumnos</string>
+    <string name="btn_agregar_gestionar_alumno">Agregar</string>
+    <string name="btn_cancelar_gestionar_alumno">Cancelar</string>
+
+    <string name="txt_indicacion_solicitar_alumno">Ingresar alumno</string>
+    <string name="txt_indicacion_desc_solicitar_alumno">¡Falta poco!</string>
+    <string name="txt_desc_solicitar_alumno">Por favor ingresa algunos campos necesarios para completar el registro del alumno.</string>
+    <string name="txt_nombre_ingresar_alumno">Nombre</string>
+    <string name="txt_telefono_ingresar_alumno">Telefono</string>
+    <string name="txt_direccion_ingresar_alumno">Dirección</string>
+    <string name="txt_email_ingresar_alumno">Email</string>
+    <string name="btn_guardar_ingresar_alumno">Guardar</string>
+    <string name="btn_cancelar_ingresar_alumno">Cancelar</string>
+
+    <string name="txt_indicacion_editar_alumno">Editar alumno</string>
+    <string name="txt_indicacion_desc_editar_alumno">¡Falta poco!</string>
+    <string name="txt_desc_editar_alumno">Por favor ingresa algunos campos necesarios para completar la edición del alumno.</string>
+    <string name="txt_nombre_editar_alumno">Nombre</string>
+    <string name="txt_telefono_editar_alumno">Telefono</string>
+    <string name="txt_direccion_editar_alumno">Dirección</string>
+    <string name="txt_email_editar_alumno">Email</string>
+    <string name="btn_guardar_editar_alumno">Guardar</string>
+    <string name="btn_cancelar_editar_alumno">Cancelar</string>
+
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="50dp"
+    android:weightSum="100"
+    android:background="#EEEEEE">
+    <androidx.cardview.widget.CardView
+
+        android:id="@+id/cardHorario"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_weight="50"
+        android:layout_marginBottom="50dp"
+        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="#FAFAFA"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/imageHorario"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_calendar_today_black_18dp"
+            android:padding="32dp"/>
+
+        <TextView
+            android:id="@+id/txt_Horario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/txt_Horario"
+            android:textAlignment="center" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAlumnos"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_weight="50"
+        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="#FAFAFA"
+        android:layout_below="@id/cardHorario"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/imageAlumnos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_add_student_foreground"
+            android:padding="32dp"/>
+
+        <TextView
+            android:id="@+id/txt_alumnos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="10dp"
+            android:text="@string/txt_Alumnos" />
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
