@@ -31,25 +31,38 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="96dp" />
+                android:layout_marginBottom="48dp" />
 
             <RelativeLayout
                 android:layout_width="340dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
 
-                <Button
-                    android:id="@+id/btn_agregar_gestionar_alumno"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/btn_agregar_gestionar_alumno" />
+                    android:weightSum="100"
+                    android:orientation="horizontal" >
 
-                <Button
-                    android:id="@+id/btn_cancelar_gestionar_alumno"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btn_agregar_gestionar_alumno"
-                    android:text="@string/btn_cancelar_gestionar_alumno" />
+                    <Button
+                        android:id="@+id/btn_cancelar_gestionar_alumno"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:layout_below="@id/btn_agregar_gestionar_alumno"
+                        android:text="@string/btn_cancelar_gestionar_alumno"
+                        android:layout_marginRight="5dp"
+                        android:drawableLeft="@drawable/icon_back_foreground"/>
+
+                    <Button
+                        android:id="@+id/btn_agregar_gestionar_alumno"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:text="@string/btn_agregar_gestionar_alumno"
+                        android:drawableLeft="@drawable/icon_add_foreground"/>
+
+                </LinearLayout>
 
             </RelativeLayout>
 

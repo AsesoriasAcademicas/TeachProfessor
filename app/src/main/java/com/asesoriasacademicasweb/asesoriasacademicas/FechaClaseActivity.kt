@@ -19,7 +19,6 @@ class FechaClaseActivity: AppCompatActivity(), IFechaClaseVista {
 
     val iFechaClaseControlador = FechaClaseControlador(this)
     lateinit var calendarView: CalendarView
-    var alertDialog: AlertDialog? = null
 
     @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,24 +35,8 @@ class FechaClaseActivity: AppCompatActivity(), IFechaClaseVista {
             val email= getIntent().getStringExtra("email")
             intentClass.putExtra("email", email)
             intentClass.putExtra("fecha", formattedDate)
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            alertDialog = builder.create()
-            alertDialog?.show()
             startActivity(intentClass)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        alertDialog?.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        alertDialog?.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

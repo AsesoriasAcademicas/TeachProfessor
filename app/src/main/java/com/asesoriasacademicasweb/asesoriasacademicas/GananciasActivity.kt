@@ -24,7 +24,6 @@ import java.util.*
 class GananciasActivity: AppCompatActivity(), IGananciasVista {
 
     var request: RequestQueue? = null
-    var alertDialog: AlertDialog? = null
 
     val iGananciasControlador = GanaciasControladorar(this)
 
@@ -78,29 +77,24 @@ class GananciasActivity: AppCompatActivity(), IGananciasVista {
         btnCancelarGanancias.setOnClickListener{
             val email= getIntent().getStringExtra("email")
             val intentMain = Intent(this, EditarPerfilActivity::class.java)
-            intentMain.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentMain.putExtra("email", email)
             startActivity(intentMain)
         }
 
         val btnCalcularGanancias = findViewById<Button>(R.id.btn_calcular_ganancias)
         btnCalcularGanancias.setOnClickListener{
             request = Volley.newRequestQueue(this)
+            var builder = AlertDialog.Builder(this)
+            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+            builder.setView(dialogView)
+            builder.setCancelable(false)
+            val alertDialog = builder.create()
+            alertDialog.show()
 
             if(!fecha_inicio.text.toString().isEmpty() && !fecha_fin.text.toString().isEmpty()){
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/ganancias_profesor.php?email=$stringEmail&fecha_inicio=${fecha_inicio.text}&fecha_fin=${fecha_fin.text}"
                 url = url.replace(" ","%20")
-                var builder = AlertDialog.Builder(this)
-                val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                builder.setView(dialogView)
-                builder.setCancelable(false)
-                alertDialog = builder.create()
-                alertDialog?.show()
+
                 val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                         Response.Listener { response ->
                             try {
@@ -118,24 +112,16 @@ class GananciasActivity: AppCompatActivity(), IGananciasVista {
                             }
                         },
                         Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                            alertDialog?.dismiss()
                         })
                 request?.add(jsonObjectRequest)
             }
             else{
-                Toast.makeText(this, "\n" + "Por favor ingresa los rangos de fecha y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "\n" + "Por favor ingresa los rangos de fecha y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                alertDialog?.dismiss()
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        alertDialog?.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        alertDialog?.dismiss()
     }
 
     override fun onLoginSuccess(mensaje: String) {

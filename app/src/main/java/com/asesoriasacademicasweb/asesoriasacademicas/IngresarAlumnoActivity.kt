@@ -49,6 +49,13 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumno {
 
             var persona = Persona()
             val intentRegistry = Intent(this, GestionarAlumnosClase::class.java)
+            var builder = AlertDialog.Builder(this)
+            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+            builder.setView(dialogView)
+            builder.setCancelable(false)
+            val alertDialog = builder.create()
+            alertDialog.show()
+
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/registrar_usuario.php?nombre=$stringNombre&email=$stringEmail" +
                     "&telefono=$stringTelefono&direccion=$stringDireccion&password="
             println(url)
@@ -81,12 +88,7 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumno {
                                         val jsonArray = response.optJSONArray("user")
                                         val jsonObjet = jsonArray.getJSONObject(0)
                                         intentRegistry.putExtra("email", emailBuscado)
-                                        var builder = AlertDialog.Builder(this)
-                                        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                        builder.setView(dialogView)
-                                        builder.setCancelable(false)
-                                        val alertDialog = builder.create()
-                                        alertDialog.show()
+                                        alertDialog.dismiss()
                                         startActivity(intentRegistry)
                                     } catch (e: JSONException) {
                                         e.printStackTrace()
@@ -94,17 +96,20 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumno {
                                 },
                                 Response.ErrorListener { error ->
                                     Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                    alertDialog.dismiss()
                                 })
                             request?.add(jsonObjectRequest)
                         } else if(response.getString("success") == "0") {
                             Toast.makeText(this, "\n" + "Ocurrió un error en el registro de su información!", Toast.LENGTH_SHORT).show()
+                            alertDialog.dismiss()
                         }
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
                 })
             request?.add(jsonObjectRequest)
         }
@@ -112,22 +117,9 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumno {
         val btnCancelarEditarPerfil = findViewById<Button>(R.id.btn_cancelar_ingresar_alumno)
         btnCancelarEditarPerfil.setOnClickListener{
             val intentMain = Intent(this, GestionarAlumnosClase::class.java)
-            intentMain.putExtra("email", emailBuscado);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentMain.putExtra("email", emailBuscado)
             startActivity(intentMain)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

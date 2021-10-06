@@ -50,7 +50,8 @@
             android:id="@+id/btn_guardar_hora_clase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_guardar_hora_clase" />
+            android:text="@string/btn_guardar_hora_clase"
+            android:drawableLeft="@drawable/icon_ok_foreground"/>
 
     </LinearLayout>
 </ScrollView>

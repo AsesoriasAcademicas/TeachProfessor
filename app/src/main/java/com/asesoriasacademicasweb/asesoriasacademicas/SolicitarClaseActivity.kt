@@ -338,6 +338,12 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         autotextView.setAdapter(adapter)
 
         request = Volley.newRequestQueue(this)
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
         url = url.replace(" ", "%20")
@@ -363,6 +369,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
                     if (adaptador.count != 0) {
                         autotextViewAlumno?.setAdapter(adaptador)
+                        alertDialog.dismiss()
 
                     } else {
                         val mensajeClasesVacio: ArrayList<String> = ArrayList()
@@ -374,6 +381,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                             mensajeClasesVacio
                         )
                         autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                        alertDialog.dismiss()
                     }
                 } catch (e: JSONException) {
                     val mensajeClasesVacio: ArrayList<String> = ArrayList()
@@ -385,6 +393,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                         mensajeClasesVacio
                     )
                     autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                    alertDialog.dismiss()
                 }
             },
             Response.ErrorListener { error ->
@@ -392,7 +401,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                     this,
                     "\n" + "Ocurrió un error al cargar los estudiantes!",
                     Toast.LENGTH_SHORT
-                ).show();
+                ).show()
+                alertDialog.dismiss()
             })
         request?.add(jsonObjectRequest)
 
@@ -462,6 +472,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             val intentInsert = Intent(this, GestionarClaseActivity::class.java)
             profesor = iSolicitarClaseControlador.getTeacher(this,stringEmail.toString())
 
+            alertDialog.show()
             if(profesor.id == 0){
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
                 url = url.replace(" ","%20")
@@ -514,12 +525,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                                                     clase.id = jsonObjet.getInt("id_clase")
                                                                     if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
                                                                         intentInsert.putExtra("email", stringEmail)
-                                                                        var builder = AlertDialog.Builder(this)
-                                                                        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                                                        builder.setView(dialogView)
-                                                                        builder.setCancelable(false)
-                                                                        alertDialog = builder.create()
-                                                                        alertDialog?.show()
+                                                                        alertDialog.dismiss()
                                                                         startActivity(intentInsert)
                                                                     }
 
@@ -529,14 +535,17 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                                             },
                                                             Response.ErrorListener { error ->
                                                                 Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
+                                                                alertDialog.dismiss()
                                                             })
                                                     request?.add(jsonObjectRequest)
                                                 } else if (response.getString("error") == "0") {
                                                     Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                                    alertDialog.dismiss()
                                                 }
                                             },
                                             Response.ErrorListener { error ->
-                                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                                alertDialog.dismiss()
                                             })
                                     request?.add(jsonObjectRequest)
                                 }
@@ -546,7 +555,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                             }
                         },
                         Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show()
+                            alertDialog.dismiss()
                         })
                 request?.add(jsonObjectRequest)
             } else{
@@ -591,6 +601,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                                     clase.id = jsonObjet.getInt("id_clase")
                                                     if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
                                                         intentInsert.putExtra("email", stringEmail)
+                                                        alertDialog.dismiss()
                                                         startActivity(intentInsert)
                                                     }
 
@@ -600,14 +611,17 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                             },
                                             Response.ErrorListener { error ->
                                                 Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
+                                                alertDialog.dismiss()
                                             })
                                     request?.add(jsonObjectRequest)
                                 } else if (response.getString("error") == "0") {
                                     Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
                                 }
                             },
                             Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                alertDialog.dismiss()
                             })
                     request?.add(jsonObjectRequest)
                 }
@@ -663,13 +677,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         btnCancelarClase.setOnClickListener{
             val intentClass = Intent(this, GestionarClaseActivity::class.java)
             val email= getIntent().getStringExtra("email")
-            intentClass.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentClass.putExtra("email", email)
             startActivity(intentClass)
         }
 
@@ -710,16 +718,6 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        alertDialog?.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        alertDialog?.dismiss()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -729,26 +727,14 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
             var email= getIntent().getStringExtra("email")
-            intentEditarPerfil.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
             val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentLogout.putExtra("email", email)
             startActivity(intentLogout)
         }
         return true

@@ -81,6 +81,12 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val duracion= findViewById<TextInputEditText>(R.id.txt_duracion_editar_clase)
 
         clase = obj.buscarClase(this, idClase.toString())
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         if(clase.id == 0){
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
@@ -105,12 +111,14 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                             fecha?.setText(clase.fecha)
                             tiempo?.setText(clase.hora)
                             duracion?.setText(clase.duracion)
+                            alertDialog.dismiss()
                         } catch (e: JSONException) {
                             e.printStackTrace()
                         }
                     },
                     Response.ErrorListener { error ->
-                        Toast.makeText(this, "\n" + "Ocurrió un error cargando la infomación de su clase!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "\n" + "Ocurrió un error cargando la infomación de su clase!", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
                     })
             request?.add(jsonObjectRequest)
         }
@@ -121,6 +129,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             fecha?.setText(clase.fecha)
             tiempo?.setText(clase.hora)
             duracion?.setText(clase.duracion)
+            alertDialog.dismiss()
         }
 
         var materiaSeleccionada = ""
@@ -448,6 +457,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                     val email = getIntent().getStringExtra("email")
                     var idClase = clase.id
                     var estadoClase = clase.estado
+                    alertDialog.show()
+
                     var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_clase.php?materia=$stringMateria&tema=$stringTema" +
                             "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&idClase=$idClase"
                     url = url.replace(" ","%20")
@@ -464,23 +475,21 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                             Response.Listener { response ->
                                 if (response.getString("success") == "1"){
                                     intentDetalleClase.putExtra("email", email);
-                                    var builder = AlertDialog.Builder(this)
-                                    val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                    builder.setView(dialogView)
-                                    builder.setCancelable(false)
-                                    val alertDialog = builder.create()
-                                    alertDialog.show()
+                                    alertDialog.dismiss()
                                     startActivity(intentDetalleClase)
                                 } else if(response.getString("error") == "0") {
                                     Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
                                 }
                             },
                             Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show()
+                                alertDialog.dismiss()
                             })
                     request?.add(jsonObjectRequest)
                 } else {
                     Toast.makeText(this, "Transaccion fallida", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
                 }
             }
         }
@@ -535,14 +544,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             val intentCancelar = Intent(this, PopupDetalleClaseActivity::class.java)
             var idBusqueda = clase.id.toString()
             val email= getIntent().getStringExtra("email")
-            intentCancelar.putExtra("email", email);
-            intentCancelar.putExtra("id_clase", idBusqueda);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentCancelar.putExtra("email", email)
+            intentCancelar.putExtra("id_clase", idBusqueda)
             startActivity(intentCancelar)
         }
 
@@ -579,13 +582,6 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -595,26 +591,14 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
             val email= getIntent().getStringExtra("email")
-            intentEditarPerfil.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
             val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentLogout.putExtra("email", email)
             startActivity(intentLogout)
         }
         return true

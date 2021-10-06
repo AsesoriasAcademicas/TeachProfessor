@@ -31,13 +31,13 @@
     <string name="txt_email_registration">Email</string>
     <string name="txt_password_registration">Contraseña</string>
     <string name="txt_repet_password_registration">Repite tu contraseña</string>
-    <string name="btn_registrarse_registration">Registrarse</string>
-    <string name="btn_cancelar_registration">Cancelar</string>
+    <string name="btn_registrarse_registration">Guardar</string>
+    <string name="btn_cancelar_registration">Atrás</string>
     <string name="txt_indicacion_registration">¡Ya estás a un paso!</string>
     <string name="txt_indicacion_completa_registration">Por favor, ingresa tus datos para completar el registro de tu cuenta.</string>
 
     <string name="btn_agregar_gestionar_clase">Agregar</string>
-    <string name="btn_cancelar_gestionar_clase">Cancelar</string>
+    <string name="btn_cancelar_gestionar_clase">Atrás</string>
 
     <string name="txt_indicacion_solicitar_clase">Ingresar clase</string>
     <string name="txt_materia_solicitar_clase">Materia</string>
@@ -58,7 +58,7 @@
     <string name="txt_desc_solicitar_clase">Por favor ingresa algunos campos necesarios para completar el registro de la clase.</string>
 
     <string name="txt_listaClase_clase">Lista clases</string>
-    <string name="btn_listado_clases">Cancelar</string>
+    <string name="btn_listado_clases">Atrás</string>
 
     <string name="txt_detalle_class">Detalle clase</string>
     <string name="btn_eliminar_class">Eliminar</string>
@@ -106,10 +106,12 @@
 
     <string name="txt_Horario">Horario</string>
     <string name="txt_Alumnos">Alumnos</string>
+    <string name="txt_nombre"></string>
+    <string name="txt_titulo">Docente </string>
 
     <string name="txt_listaAlumno_alumnos_alumno">Lista alumnos</string>
     <string name="btn_agregar_gestionar_alumno">Agregar</string>
-    <string name="btn_cancelar_gestionar_alumno">Cancelar</string>
+    <string name="btn_cancelar_gestionar_alumno">Atrás</string>
 
     <string name="txt_indicacion_solicitar_alumno">Ingresar alumno</string>
     <string name="txt_indicacion_desc_solicitar_alumno">¡Falta poco!</string>
@@ -119,7 +121,7 @@
     <string name="txt_direccion_ingresar_alumno">Dirección</string>
     <string name="txt_email_ingresar_alumno">Email</string>
     <string name="btn_guardar_ingresar_alumno">Guardar</string>
-    <string name="btn_cancelar_ingresar_alumno">Cancelar</string>
+    <string name="btn_cancelar_ingresar_alumno">Atrás</string>
 
     <string name="txt_indicacion_editar_alumno">Editar alumno</string>
     <string name="txt_indicacion_desc_editar_alumno">¡Falta poco!</string>
@@ -129,6 +131,6 @@
     <string name="txt_direccion_editar_alumno">Dirección</string>
     <string name="txt_email_editar_alumno">Email</string>
     <string name="btn_guardar_editar_alumno">Guardar</string>
-    <string name="btn_cancelar_editar_alumno">Cancelar</string>
+    <string name="btn_cancelar_editar_alumno">Atrás</string>
 
 </resources>

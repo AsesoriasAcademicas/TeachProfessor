@@ -29,6 +29,12 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
         setContentView(R.layout.activity_gestionar_alumnos)
 
         request = Volley.newRequestQueue(this)
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
         url = url.replace(" ", "%20")
@@ -56,7 +62,7 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
 
                     if (adaptador.count != 0) {
                         listView?.setAdapter(adaptador)
-
+                        alertDialog.dismiss()
                         listView?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
                             val intentEditarAlumno =
                                 Intent(this, EditarAlumnoActivity::class.java)
@@ -66,13 +72,6 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
                                 estudiantes[position].email
                             )
                             val email = getIntent().getStringExtra("email")
-                            var builder = AlertDialog.Builder(this)
-                            val dialogView: View =
-                                View.inflate(this, R.layout.activity_dialog, null)
-                            builder.setView(dialogView)
-                            builder.setCancelable(false)
-                            val alertDialog = builder.create()
-                            alertDialog.show()
                             intentEditarAlumno.putExtra("email", email);
                             startActivity(intentEditarAlumno)
                         })
@@ -86,6 +85,7 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
                             mensajeClasesVacio
                         )
                         listView?.setAdapter(adaptadorEmpty)
+                        alertDialog.dismiss()
                     }
                 } catch (e: JSONException) {
                     val listViewEmpty: ListView? = findViewById(R.id.listView_class)
@@ -98,6 +98,7 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
                         mensajeClasesVacio
                     )
                     listViewEmpty?.setAdapter(adaptadorEmpty)
+                    alertDialog.dismiss()
                 }
             },
             Response.ErrorListener { error ->
@@ -105,18 +106,13 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
                     this,
                     "\n" + "Ocurrió un error al cargar los estudiantes!",
                     Toast.LENGTH_SHORT
-                ).show();
+                ).show()
+                alertDialog.dismiss()
             })
         request?.add(jsonObjectRequest)
 
         val btnAgregarAlumno = findViewById<Button>(R.id.btn_agregar_gestionar_alumno)
         btnAgregarAlumno.setOnClickListener{
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             val intentClass = Intent(this, IngresarAlumnoActivity::class.java)
             val email= getIntent().getStringExtra("email")
             intentClass.putExtra("email", email)
@@ -128,21 +124,8 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
             val intentInicio = Intent(this, InicioActivity::class.java)
             val email= getIntent().getStringExtra("email")
             intentInicio.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentInicio)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -155,12 +138,6 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
         if (item.itemId == R.id.editar_perfil){
             val email= getIntent().getStringExtra("email")
             intentEditarPerfil.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentEditarPerfil)
         }
 
@@ -168,12 +145,6 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
         if (item.itemId == R.id.logout){
             val email= getIntent().getStringExtra("email")
             intentLogout.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentLogout)
         }
         return true

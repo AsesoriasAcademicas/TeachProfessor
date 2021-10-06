@@ -119,16 +119,28 @@
             android:layout_height="wrap_content"
             android:text="He leído y acepto los términos y condiciones de la política de protección de datos." />
 
-        <Button
-            android:id="@+id/btn_registrarse_registro"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_registrarse_registration" />
+            android:weightSum="100"
+            android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/btn_cancelar_registro"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_cancelar_registration" />
+                <Button
+                    android:id="@+id/btn_cancelar_registro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="@string/btn_cancelar_registration"
+                    android:layout_marginRight="5dp"
+                    android:drawableLeft="@drawable/icon_back_foreground"/>
+
+                <Button
+                    android:id="@+id/btn_registrarse_registro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="@string/btn_registrarse_registration"
+                    android:drawableLeft="@drawable/icon_save_foreground"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

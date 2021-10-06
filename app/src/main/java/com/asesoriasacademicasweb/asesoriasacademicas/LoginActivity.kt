@@ -54,31 +54,25 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
 
         val btnRegistration = findViewById<Button>(R.id.btn_registrarse_login)
         btnRegistration.setOnClickListener{
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             val intentInsert = Intent(this, RegistrarseActivity::class.java)
             startActivity(intentInsert)
         }
 
         val btnLogin = findViewById<Button>(R.id.btn_iniciar_sesion_login)
         btnLogin.setOnClickListener {
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
-
                 stringEmail = email?.text.toString().trim()
                 stringPass = password?.text.toString().trim()
 
                 val passEncript = encriptar(stringPass)
 
                 val intentLogin = Intent(this, InicioActivity::class.java)
+                var builder = AlertDialog.Builder(this)
+                val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+                builder.setView(dialogView)
+                builder.setCancelable(false)
+                val alertDialog = builder.create()
+                alertDialog.show()
+
                 var url =
                     "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
                 url = url.replace(" ", "%20")
@@ -93,6 +87,7 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
                                     ) == -1
                                 ) {
                                     intentLogin.putExtra("email", stringEmail)
+                                    alertDialog.dismiss()
                                     startActivity(intentLogin)
                                 } else {
                                     var url =
@@ -149,13 +144,6 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
                     })
                 request?.add(jsonObjectRequest)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onLoginSuccess(mensaje: String) {

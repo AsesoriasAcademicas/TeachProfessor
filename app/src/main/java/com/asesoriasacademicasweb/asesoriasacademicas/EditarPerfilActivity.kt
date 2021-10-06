@@ -37,7 +37,6 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
     val iEditarPerfilControlador = EditarPerfilControlador(this)
     var request: RequestQueue? = null
-    var alertDialog: AlertDialog? = null
 
     private val secretKeyAES = "asesoriasacademicas"
     private val saltAES = "teach2021"
@@ -61,6 +60,13 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
         val emailBuscado= getIntent().getStringExtra("email")
 
         persona = iEditarPerfilControlador.getUser(this, "" + emailBuscado)
+
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         if(persona != null){
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$emailBuscado"
@@ -90,17 +96,20 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
                                                 password?.setText(passDesEncript)
                                                 repetPassword?.setText(passDesEncript)
+                                                alertDialog.dismiss()
                                             } catch (e: JSONException) {
                                                 e.printStackTrace()
                                             }
                                         },
                                         Response.ErrorListener { error ->
                                             Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                            alertDialog.dismiss()
                                         })
                                 request?.add(jsonObjectRequest)
 
                             } else if (response.getString("success") == "0") {
                                 Toast.makeText(this, "\n" + "Ocurrio un error al cargar el perfil!", Toast.LENGTH_SHORT).show();
+                                alertDialog.dismiss()
                             }
                         } catch (e: JSONException) {
                             e.printStackTrace()
@@ -108,6 +117,7 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                     },
                     Response.ErrorListener { error ->
                         Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss()
                     })
             request?.add(jsonObjectRequest)
         } else {
@@ -116,18 +126,13 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
             direccion?.setText(persona.direccion)
             password?.setText(persona.contrasenia)
             repetPassword?.setText(persona.contrasenia)
+            alertDialog.dismiss()
         }
 
         val btnCancelarEditarPerfil = findViewById<Button>(R.id.btn_cancelar_editar_perfil)
         btnCancelarEditarPerfil.setOnClickListener{
             val intentMain = Intent(this, InicioActivity::class.java)
             intentMain.putExtra("email", emailBuscado);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentMain)
         }
 
@@ -148,7 +153,8 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
             val passEncript = encriptar(stringPass)
 
-            val intentEditProfile = Intent(this, GestionarClaseActivity::class.java)
+            val intentEditProfile = Intent(this, InicioActivity::class.java)
+            alertDialog.show()
             if(iEditarPerfilControlador.onEditProfile(this, stringNombre, stringEmail, stringTelefono, stringDireccion, stringPass, stringRepetPass) == -1) {
                 val persona = Persona(stringNombre, stringEmail, stringTelefono, stringDireccion, passEncript, "Estudiante")
                 if (iEditarPerfilControlador.updateProfile(this, persona) == 1) {
@@ -167,19 +173,16 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                             Response.Listener { response ->
                                 if (response.getString("success") == "1"){
                                     intentEditProfile.putExtra("email", stringEmail!!)
-                                    var builder = AlertDialog.Builder(this)
-                                    val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                    builder.setView(dialogView)
-                                    builder.setCancelable(false)
-                                    alertDialog = builder.create()
-                                    alertDialog?.show()
+                                    alertDialog.dismiss()
                                     startActivity(intentEditProfile)
                                 } else if(response.getString("error") == "0") {
                                     Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su perfil!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
                                 }
                             },
                             Response.ErrorListener { error ->
                                 Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su perfil!", Toast.LENGTH_SHORT).show();
+                                alertDialog.dismiss()
                             })
                     request?.add(jsonObjectRequest)
                 }
@@ -191,24 +194,8 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
             val email= getIntent().getStringExtra("email")
             val intentGanancias = Intent(this, GananciasActivity::class.java)
             intentGanancias.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            alertDialog = builder.create()
-            alertDialog?.show()
             startActivity(intentGanancias)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        alertDialog?.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        alertDialog?.dismiss()
     }
 
     override fun onLoginSuccess(mensaje: String) {

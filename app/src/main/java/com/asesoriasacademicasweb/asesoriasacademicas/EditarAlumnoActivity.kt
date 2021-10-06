@@ -39,6 +39,12 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
         var persona = Persona()
         val emailBuscado= getIntent().getStringExtra("email")
         val emailEstudiante= getIntent().getStringExtra("email_estudiante")
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_perfil.php?email=$emailEstudiante"
         println(url)
@@ -57,12 +63,14 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
                     telefono?.setText(persona.telefono)
                     direccion?.setText(persona.direccion)
                     email?.setText(persona.email)
+                    alertDialog.dismiss()
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
             },
             Response.ErrorListener { error ->
-                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                alertDialog.dismiss()
             })
         request?.add(jsonObjectRequest)
 
@@ -70,22 +78,9 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
         btnCancelarEditarAlumno.setOnClickListener {
             val intentInicio = Intent(this, GestionarAlumnosClase::class.java)
             val email= getIntent().getStringExtra("email")
-            intentInicio.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentInicio.putExtra("email", email)
             startActivity(intentInicio)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

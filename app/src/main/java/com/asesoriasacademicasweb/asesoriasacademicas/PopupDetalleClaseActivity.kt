@@ -41,6 +41,12 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         val estado: Switch = findViewById(R.id.swt_estado_solicitar_clase)
 
         clase = iGestionarClaseControlador.findClass(this, idClase.toString())
+        var builder = AlertDialog.Builder(this)
+        val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
 
         if(clase.id == 0){
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
@@ -73,47 +79,59 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                             fecha?.setText(clase.fecha)
                             hora?.setText(clase.hora)
                             duracion?.setText(clase.duracion)
+                            alertDialog.dismiss()
 
                             estado.setOnCheckedChangeListener{buttonView, isChecked ->
                                 if (isChecked){
                                     if(iGestionarClaseControlador.changeStatus(this, "activo", idClase.toString()) == 1) {
                                         var estado = "activo"
+                                        alertDialog.show()
+
                                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
                                         url = url.replace(" ", "%20")
                                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                                 Response.Listener { response ->
                                                     if (response.getString("success") == "1") {
                                                         Toast.makeText(this, "La clase se cambió a estado ACTIVO", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
                                                     } else if (response.getString("error") == "0") {
                                                         Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
                                                     }
                                                 },
                                                 Response.ErrorListener { error ->
                                                     Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show();
+                                                    alertDialog.dismiss()
                                                 })
                                         request?.add(jsonObjectRequest)
                                     }
                                 } else {
                                     if(iGestionarClaseControlador.changeStatus(this, "inactivo", idClase.toString()) == 1) {
                                         var estado = "inactivo"
+                                        alertDialog.show()
+
                                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
                                         url = url.replace(" ", "%20")
                                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                                 Response.Listener { response ->
                                                     if (response.getString("success") == "1") {
                                                         Toast.makeText(this, "La clase se cambió a estado INACTIVO", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
                                                     } else if (response.getString("error") == "0") {
                                                         Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
                                                     }
                                                 },
                                                 Response.ErrorListener { error ->
-                                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                                    alertDialog.dismiss()
                                                 })
                                         request?.add(jsonObjectRequest)
                                     }
                                 }
                                 val email= getIntent().getStringExtra("email")
                                 intentListadoClases.putExtra("email", email);
+                                alertDialog.dismiss()
                                 startActivity(intentListadoClases)
                             }
                         } catch (e: JSONException) {
@@ -121,7 +139,8 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                         }
                     },
                     Response.ErrorListener { error ->
-                        Toast.makeText(this, "\n" + "Error de registro!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "\n" + "Error de registro!", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
                     })
             request?.add(jsonObjectRequest)
         }
@@ -140,58 +159,71 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             fecha?.setText(clase.fecha)
             hora?.setText(clase.hora)
             duracion?.setText(clase.duracion)
+            alertDialog.dismiss()
 
             estado.setOnCheckedChangeListener{buttonView, isChecked ->
                 if (isChecked){
                     if(iGestionarClaseControlador.changeStatus(this, "activo", idClase.toString()) == 1) {
                         var estado = "activo"
+                        alertDialog.show()
+
                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
                         url = url.replace(" ", "%20")
                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                 Response.Listener { response ->
                                     if (response.getString("success") == "1") {
                                         Toast.makeText(this, "La clase se cambió a estado ACTIVO", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
                                     } else if (response.getString("error") == "0") {
                                         Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
                                     }
                                 },
                                 Response.ErrorListener { error ->
-                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
                                 })
                         request?.add(jsonObjectRequest)
                     }
                 } else {
                     if(iGestionarClaseControlador.changeStatus(this, "inactivo", idClase.toString()) == 1) {
                         var estado = "inactivo"
+                        alertDialog.show()
+
                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
                         url = url.replace(" ", "%20")
                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                 Response.Listener { response ->
                                     if (response.getString("success") == "1") {
                                         Toast.makeText(this, "La clase se cambió a estado INACTIVO", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
                                     } else if (response.getString("error") == "0") {
                                         Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
                                     }
                                 },
                                 Response.ErrorListener { error ->
-                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, "\n" + "Ocurrió un error en el cambio de estado!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
                                 })
                         request?.add(jsonObjectRequest)
                     }
                 }
                 val email= getIntent().getStringExtra("email")
                 intentListadoClases.putExtra("email", email);
+                alertDialog.dismiss()
                 startActivity(intentListadoClases)
             }
         }
 
-        val btnBuscarClase =findViewById<Button>(R.id.btn_buscar_detalle_clase)
+        val btnBuscarClase = findViewById<Button>(R.id.btn_buscar_detalle_clase)
         btnBuscarClase.setOnClickListener {
             val intentEditarClase = Intent(this, EditarClaseActivity::class.java)
             val idBusqueda = clase.id.toString()
             intentEditarClase.putExtra("id_clase", idBusqueda)
             val email= getIntent().getStringExtra("email")
             intentEditarClase.putExtra("email", email);
+            alertDialog.show()
 
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
             url = url.replace(" ","%20")
@@ -210,15 +242,11 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                             clase.estado = jsonObjet.getString("estado")
 
                             if (clase.estado.equals("activo")) {
-                                var builder = AlertDialog.Builder(this)
-                                val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                builder.setView(dialogView)
-                                builder.setCancelable(false)
-                                val alertDialog = builder.create()
-                                alertDialog.show()
+                                alertDialog.dismiss()
                                 startActivity(intentEditarClase)
                             } else{
                                 Toast.makeText(this, "No es posible editar una clase con estado INACTIVO", Toast.LENGTH_SHORT).show()
+                                alertDialog.dismiss()
                             }
 
                         } catch (e: JSONException) {
@@ -227,6 +255,7 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                     },
                     Response.ErrorListener { error ->
                         Toast.makeText(this, "\n" + "Ocurrió un error cargando la infomación de su clase!", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss()
                     })
             request?.add(jsonObjectRequest)
         }
@@ -235,21 +264,8 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         btnListadoClases.setOnClickListener {
             val email= getIntent().getStringExtra("email")
             intentListadoClases.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentListadoClases)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -262,12 +278,6 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         if (item.itemId == R.id.editar_perfil){
             var email= getIntent().getStringExtra("email")
             intentEditarPerfil.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentEditarPerfil)
         }
 
@@ -275,12 +285,6 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         if (item.itemId == R.id.logout){
             val email= getIntent().getStringExtra("email")
             intentLogout.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentLogout)
         }
         return true

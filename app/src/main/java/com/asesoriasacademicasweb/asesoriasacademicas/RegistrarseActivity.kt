@@ -72,6 +72,12 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
             if(iRegistraseControlador.onRegistry(this, stringNombre, stringEmail, stringPass, stringRepetPass, booleanCheck) == -1) {
                 val persona = Persona(stringNombre, stringEmail, passEncript)
+                var builder = AlertDialog.Builder(this)
+                val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+                builder.setView(dialogView)
+                builder.setCancelable(false)
+                val alertDialog = builder.create()
+                alertDialog.show()
 
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
                 url = url.replace(" ","%20")
@@ -123,12 +129,7 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                                                         profesor.id = jsonObjet.getInt("id_profesor")
                                                                         if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
                                                                             intentRegistry.putExtra("email", stringEmail)
-                                                                            var builder = AlertDialog.Builder(this)
-                                                                            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                                                                            builder.setView(dialogView)
-                                                                            builder.setCancelable(false)
-                                                                            val alertDialog = builder.create()
-                                                                            alertDialog.show()
+                                                                            alertDialog.dismiss()
                                                                             startActivity(intentRegistry)
                                                                         }
                                                                     } catch (e: JSONException) {
@@ -136,18 +137,21 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                                                     }
                                                                 },
                                                                 Response.ErrorListener { error ->
-                                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                                                    alertDialog.dismiss()
                                                                 })
                                                             request?.add(jsonObjectRequest)
                                                         } else if(response.getString("success") == "0") {
                                                             Toast.makeText(this, "\n" + "Ocurrió un error en el registro de su información!", Toast.LENGTH_SHORT).show()
+                                                            alertDialog.dismiss()
                                                         }
                                                     } catch (e: JSONException) {
                                                         e.printStackTrace()
                                                     }
                                                 },
                                                 Response.ErrorListener { error ->
-                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                                    alertDialog.dismiss()
                                                 })
                                         request?.add(jsonObjectRequest)
                                 } else {
@@ -169,6 +173,7 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                                     profesor.id = jsonObjet.getInt("id_profesor")
                                                     if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
                                                         intentRegistry.putExtra("email", stringEmail)
+                                                        alertDialog.dismiss()
                                                         startActivity(intentRegistry)
                                                     }
                                                 } catch (e: JSONException) {
@@ -176,7 +181,8 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                                 }
                                             },
                                             Response.ErrorListener { error ->
-                                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                                alertDialog.dismiss()
                                             })
                                     request?.add(jsonObjectRequest)
                                 }
@@ -185,7 +191,8 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                             }
                         },
                         Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                            alertDialog.dismiss()
                         })
                 request?.add(jsonObjectRequest)
             }
@@ -194,21 +201,8 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
         val btnCancelarRegistro = findViewById<Button>(R.id.btn_cancelar_registro)
         btnCancelarRegistro.setOnClickListener{
             val intentLogin = Intent(this, LoginActivity::class.java)
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
             startActivity(intentLogin)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var builder = AlertDialog.Builder(this)
-        val alertDialog = builder.create()
-        alertDialog.dismiss()
     }
 
     override fun onLoginSuccess(mensaje: String) {

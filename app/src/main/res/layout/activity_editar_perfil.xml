@@ -129,17 +129,30 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_guardar_editar_perfil"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_guardar_editar_perfil" />
+        android:weightSum="100"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/btn_cancelar_editar_perfil"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_cancelar_registration" />
+        <Button
+            android:id="@+id/btn_cancelar_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="@string/btn_cancelar_registration"
+            android:layout_marginRight="5dp"
+            android:drawableLeft="@drawable/icon_back_foreground"/>
+
+        <Button
+            android:id="@+id/btn_guardar_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:text="@string/btn_guardar_editar_perfil"
+            android:drawableLeft="@drawable/icon_save_foreground"/>
+
+    </LinearLayout>
 
 </LinearLayout>
     </ScrollView>

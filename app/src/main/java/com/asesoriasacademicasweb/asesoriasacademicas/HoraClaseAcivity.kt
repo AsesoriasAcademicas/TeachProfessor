@@ -19,7 +19,6 @@ import java.util.*
 class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
 
     val iHoraClaseControlador = HolaClaseControlador(this)
-    var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +48,6 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
             intentClass.putExtra("email", email);
             intentClass.putExtra("fecha", fecha);
             intentClass.putExtra("hora", hourMin);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            alertDialog = builder.create()
-            alertDialog?.show()
             startActivity(intentClass)
         }
 
@@ -90,16 +83,6 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
             intentClass.putExtra("hora", hour.toString());
             startActivity(intentClass)
         })*/
-    }
-
-    override fun onPause() {
-        super.onPause()
-        alertDialog?.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        alertDialog?.dismiss()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
