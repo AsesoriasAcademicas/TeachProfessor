@@ -1,6 +1,7 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -17,8 +18,8 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.asesoriasacademicasweb.asesoriasacademicas.Model.Persona
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IInicioVista
-import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
+
 
 class InicioActivity: AppCompatActivity(), IInicioVista {
 
@@ -29,7 +30,6 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
         setContentView(R.layout.activity_inicio)
 
         request = Volley.newRequestQueue(this)
-
         val stringEmail= getIntent().getStringExtra("email")
 
         var cardViewUser = findViewById<CardView>(R.id.cardUser)
@@ -90,6 +90,20 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
         return true
     }
 
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Salir de la aplicación")
+        builder.setMessage("¿Seguro que deseas salir de Teach?")
+                .setCancelable(false)
+                .setPositiveButton("Confirmar") { dialog, id ->
+                    val intentLogout = Intent(this, LoginActivity::class.java)
+                    startActivity(intentLogout)
+                }
+                .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
@@ -98,11 +112,20 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
             startActivity(intentEditarPerfil)
         }
 
-        val intentLogout = Intent(this, InicioActivity::class.java)
+        val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
-            val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email);
-            startActivity(intentLogout)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Salir de la aplicación")
+            builder.setMessage("¿Seguro que deseas salir de Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val email= getIntent().getStringExtra("email")
+                        intentLogout.putExtra("email", email);
+                        startActivity(intentLogout)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
         return true
     }

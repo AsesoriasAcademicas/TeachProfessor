@@ -143,9 +143,18 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
-            val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email);
-            startActivity(intentLogout)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Salir de la aplicación")
+            builder.setMessage("¿Seguro que deseas salir de Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val email= getIntent().getStringExtra("email")
+                        intentLogout.putExtra("email", email);
+                        startActivity(intentLogout)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
         return true
     }

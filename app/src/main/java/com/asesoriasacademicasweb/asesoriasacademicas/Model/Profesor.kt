@@ -123,6 +123,10 @@ class Profesor(_id: Int = 0, _nombre: String = "", _email: String = "", _telefon
         }
     }
 
+    override fun ingresoValido(context: Context): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun editarPerfil(context: Context, repetContrasenia: String): Int {
         return if (nombre.trim().isEmpty()) {
             0

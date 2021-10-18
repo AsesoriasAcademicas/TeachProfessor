@@ -1,6 +1,6 @@
 package com.asesoriasacademicasweb.asesoriasacademicas.Vista
 
-interface IIngresarAlumno {
+interface IIngresarAlumnoVista {
     fun onLoginSuccess(mensaje: String)
     fun onLoginError(mensaje: String)
 }

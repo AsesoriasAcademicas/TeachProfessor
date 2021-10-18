@@ -94,27 +94,24 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
             var email= getIntent().getStringExtra("email")
-            intentEditarPerfil.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
+            intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
-            val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email);
-            var builder = AlertDialog.Builder(this)
-            val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-            builder.setView(dialogView)
-            builder.setCancelable(false)
-            val alertDialog = builder.create()
-            alertDialog.show()
-            startActivity(intentLogout)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Salir de la aplicación")
+            builder.setMessage("¿Seguro que deseas salir de Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val email= getIntent().getStringExtra("email")
+                        intentLogout.putExtra("email", email);
+                        startActivity(intentLogout)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
         return true
     }

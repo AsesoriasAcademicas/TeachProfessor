@@ -67,6 +67,13 @@ class Estudiante(_id: Int = 0, _nombre: String = "", _email: String = "", _telef
         this.contrasenia = _contrasenia
     }
 
+    constructor(_nombre: String, _email: String, _telefono: String, _direccion: String): this(0, _nombre, _email, _telefono, "", _direccion, "Estudiante", ArrayList()){
+        this.nombre = _nombre
+        this.email = _email
+        this.telefono = _telefono
+        this.direccion = _direccion
+    }
+
     constructor(): this(0, "", "", "", "", "", "", ArrayList()){
         this.id = 0
         this.nombre = ""
@@ -121,6 +128,29 @@ class Estudiante(_id: Int = 0, _nombre: String = "", _email: String = "", _telef
             6
         } else if (!booleanCheck) {
             8
+        } else{
+            -1
+        }
+    }
+
+    override fun ingresoValido(context: Context): Int {
+        val obj = Modelo()
+        return if (nombre.trim().isEmpty()) {
+            0
+        } else if (!Pattern.compile("^([a-zA-ZñÑáéíóúÁÉÍÓÚ\\s])*\$").matcher(nombre.trim()).matches()) {
+            8
+        } else if(email.trim().isEmpty()) {
+            1
+        } else if (!Pattern.compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$").matcher(email.trim()).matches()){
+            2
+        } else if (telefono.trim().isEmpty()) {
+            3
+        } else if (!Pattern.compile("^(8+[0-9]{6}|3+[0-9]{9})\$").matcher(telefono.trim()).matches()){
+            9
+        } else if (direccion.trim().isEmpty()) {
+            4
+        } else if (obj.buscarPersona(context, email) == 1) {
+            5
         } else{
             -1
         }

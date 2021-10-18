@@ -73,8 +73,7 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
                 val alertDialog = builder.create()
                 alertDialog.show()
 
-                var url =
-                    "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
+                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
                 url = url.replace(" ", "%20")
                 val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                     Response.Listener { response ->

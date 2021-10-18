@@ -149,9 +149,6 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                 "Probabilidad y Estadística",
                 "Precálculo",
                 "Física",
-                "Html Css y JavaScript",
-                "Algoritmia y Programación",
-                "Base de datos",
                 "Herramientas Ofimáticas"
         )
 
@@ -582,6 +579,24 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         }
     }
 
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cancelar edición de la clase")
+        builder.setMessage("¿Seguro que deseas cancelar la edición de la clase?")
+                .setCancelable(false)
+                .setPositiveButton("Confirmar") { dialog, id ->
+                    val intentLogout = Intent(this, PopupDetalleClaseActivity::class.java)
+                    var idClase= getIntent().getStringExtra("id_clase")
+                    val email= getIntent().getStringExtra("email")
+                    intentLogout.putExtra("id_clase", idClase);
+                    intentLogout.putExtra("email", email);
+                    startActivity(intentLogout)
+                }
+                .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -597,9 +612,18 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
-            val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email)
-            startActivity(intentLogout)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Salir de la aplicación")
+            builder.setMessage("¿Seguro que deseas salir de Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val email= getIntent().getStringExtra("email")
+                        intentLogout.putExtra("email", email);
+                        startActivity(intentLogout)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
         return true
     }

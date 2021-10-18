@@ -68,7 +68,7 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
             val passEncript = encriptar(stringPass)
 
-            val intentRegistry = Intent(this, GestionarClaseActivity::class.java)
+            val intentRegistry = Intent(this, InicioActivity::class.java)
 
             if(iRegistraseControlador.onRegistry(this, stringNombre, stringEmail, stringPass, stringRepetPass, booleanCheck) == -1) {
                 val persona = Persona(stringNombre, stringEmail, passEncript)

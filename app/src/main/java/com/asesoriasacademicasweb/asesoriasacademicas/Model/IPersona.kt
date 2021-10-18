@@ -11,5 +11,6 @@ interface IPersona {
     var tipoPersona : String
     fun esValido(context: Context): Int
     fun registroValido(context: Context, repetContrasenia: String, booleanCheck: Boolean): Int
+    fun ingresoValido(context: Context): Int
     fun editarPerfil(context: Context, repetContrasenia: String): Int
 }

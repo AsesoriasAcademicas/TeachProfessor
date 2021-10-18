@@ -104,9 +104,6 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                 "Probabilidad y Estadística",
                 "Precálculo",
                 "Física",
-                "Html Css y JavaScript",
-                "Algoritmia y Programación",
-                "Base de datos",
                 "Herramientas Ofimáticas"
         )
 
@@ -472,7 +469,6 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             val intentInsert = Intent(this, GestionarClaseActivity::class.java)
             profesor = iSolicitarClaseControlador.getTeacher(this,stringEmail.toString())
 
-            alertDialog.show()
             if(profesor.id == 0){
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
                 url = url.replace(" ","%20")
@@ -500,6 +496,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                     var idProfesor = profesor.id
                                     var idEstudiante = id_estudiante
                                     var estadoClase = "activo"
+                                    alertDialog.show()
                                     var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
                                             "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
                                     url = url.replace(" ", "%20")
@@ -718,6 +715,22 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         }
     }
 
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cancelar ingreso de la clase")
+        builder.setMessage("¿Seguro que deseas cancelar el ingreso de la clase?")
+                .setCancelable(false)
+                .setPositiveButton("Confirmar") { dialog, id ->
+                    val intentLogout = Intent(this, GestionarClaseActivity::class.java)
+                    val email= getIntent().getStringExtra("email")
+                    intentLogout.putExtra("email", email)
+                    startActivity(intentLogout)
+                }
+                .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -733,9 +746,18 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
         val intentLogout = Intent(this, LoginActivity::class.java)
         if (item.itemId == R.id.logout){
-            val email= getIntent().getStringExtra("email")
-            intentLogout.putExtra("email", email)
-            startActivity(intentLogout)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Salir de la aplicación")
+            builder.setMessage("¿Seguro que deseas salir de Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val email= getIntent().getStringExtra("email")
+                        intentLogout.putExtra("email", email);
+                        startActivity(intentLogout)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
         return true
     }

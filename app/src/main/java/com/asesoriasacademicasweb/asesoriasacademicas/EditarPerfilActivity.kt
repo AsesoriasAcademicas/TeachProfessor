@@ -154,10 +154,11 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
             val passEncript = encriptar(stringPass)
 
             val intentEditProfile = Intent(this, InicioActivity::class.java)
-            alertDialog.show()
+
             if(iEditarPerfilControlador.onEditProfile(this, stringNombre, stringEmail, stringTelefono, stringDireccion, stringPass, stringRepetPass) == -1) {
                 val persona = Persona(stringNombre, stringEmail, stringTelefono, stringDireccion, passEncript, "Estudiante")
                 if (iEditarPerfilControlador.updateProfile(this, persona) == 1) {
+                    alertDialog.show()
                     var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_perfil.php?nombre=$stringNombre&email=$stringEmail" +
                             "&telefono=$stringTelefono&direccion=$stringDireccion&password=$passEncript"
                     url = url.replace(" ","%20")
@@ -196,6 +197,22 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
             intentGanancias.putExtra("email", email);
             startActivity(intentGanancias)
         }
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cancelar edición de perfil")
+        builder.setMessage("¿Seguro que deseas cancelar la edición del perfil?")
+                .setCancelable(false)
+                .setPositiveButton("Confirmar") { dialog, id ->
+                    val intentLogout = Intent(this, InicioActivity::class.java)
+                    val email= getIntent().getStringExtra("email")
+                    intentLogout.putExtra("email", email);
+                    startActivity(intentLogout)
+                }
+                .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
     }
 
     override fun onLoginSuccess(mensaje: String) {
