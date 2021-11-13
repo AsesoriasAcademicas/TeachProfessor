@@ -31,7 +31,7 @@ class FechaClaseActivity: AppCompatActivity(), IFechaClaseVista {
             calendar.set(year,month,dayOfMonth)
             val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
             val formattedDate = dateFormatter.format(calendar.time)
-            val intentClass = Intent(this, HoraClaseAcivity::class.java)
+            val intentClass = Intent(this, GestionarClaseActivity::class.java)
             val email= getIntent().getStringExtra("email")
             intentClass.putExtra("email", email)
             intentClass.putExtra("fecha", formattedDate)

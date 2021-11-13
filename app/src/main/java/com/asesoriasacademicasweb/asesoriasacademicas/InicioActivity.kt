@@ -1,14 +1,20 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.android.volley.Request
@@ -21,15 +27,18 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IInicioVista
 import org.json.JSONException
 
 
+@Suppress("DEPRECATION")
 class InicioActivity: AppCompatActivity(), IInicioVista {
 
     var request: RequestQueue? = null
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inicio)
 
         request = Volley.newRequestQueue(this)
+
         val stringEmail= getIntent().getStringExtra("email")
 
         var cardViewUser = findViewById<CardView>(R.id.cardUser)
@@ -45,26 +54,31 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
         val alertDialog = builder.create()
         alertDialog.show()
 
-        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_perfil.php?email=$stringEmail"
-        url = url.replace(" ","%20")
-        val jsonObjectRequest = JsonObjectRequest(
-                Request.Method.GET,url,null,
-                Response.Listener { response ->
-                    try {
-                        val jsonArray = response.optJSONArray("user")
-                        val jsonObjet = jsonArray.getJSONObject(0)
-                        persona.nombre = jsonObjet.getString("nombre")
-                        nombre?.setText(persona.nombre)
-                        alertDialog?.dismiss()
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                },
-                Response.ErrorListener { error ->
-                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss()
-                })
-        request?.add(jsonObjectRequest)
+        if (isNetworkConnected(this)) {
+            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_perfil.php?email=$stringEmail"
+            url = url.replace(" ","%20")
+            val jsonObjectRequest = JsonObjectRequest(
+                    Request.Method.GET,url,null,
+                    Response.Listener { response ->
+                        try {
+                            val jsonArray = response.optJSONArray("user")
+                            val jsonObjet = jsonArray.getJSONObject(0)
+                            persona.nombre = jsonObjet.getString("nombre")
+                            nombre?.setText(persona.nombre)
+                            alertDialog?.dismiss()
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+                    },
+                    Response.ErrorListener { error ->
+                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss()
+                    })
+            request?.add(jsonObjectRequest)
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+            alertDialog.dismiss()
+        }
 
         cardViewUser.setOnClickListener{
             val intentInsert = Intent(this, EditarPerfilActivity::class.java)
@@ -73,7 +87,7 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
         }
 
         cardViewHorario.setOnClickListener{
-            val intentInsert = Intent(this, GestionarClaseActivity::class.java)
+            val intentInsert = Intent(this, FechaClaseActivity::class.java)
             intentInsert.putExtra("email", stringEmail);
             startActivity(intentInsert)
         }
@@ -136,5 +150,11 @@ class InicioActivity: AppCompatActivity(), IInicioVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }

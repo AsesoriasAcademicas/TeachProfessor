@@ -93,7 +93,7 @@ class Clase(_id: Int = 0, _fecha: String = "", _hora: String = "", _duracion: St
     }
 
     override fun toString(): String{
-        return fecha + " | " +hora + "\n" + materia + "\n" + tema
+        return materia + "\n" + tema
     }
 
     override fun esValido(context: Context): Int {

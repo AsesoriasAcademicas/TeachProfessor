@@ -2,7 +2,9 @@ package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,6 +35,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
+@Suppress("DEPRECATION")
 class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
     val iEditarPerfilControlador = EditarPerfilControlador(this)
@@ -67,6 +70,8 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
         builder.setCancelable(false)
         val alertDialog = builder.create()
         alertDialog.show()
+
+        if (isNetworkConnected(this)) {
 
         if(persona != null){
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$emailBuscado"
@@ -126,6 +131,11 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
             direccion?.setText(persona.direccion)
             password?.setText(persona.contrasenia)
             repetPassword?.setText(persona.contrasenia)
+            alertDialog.dismiss()
+        }
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
             alertDialog.dismiss()
         }
 
@@ -221,6 +231,12 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

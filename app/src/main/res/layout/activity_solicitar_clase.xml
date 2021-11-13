@@ -366,6 +366,23 @@
 
         </LinearLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/txt_precio_solicitar_clase"
+            android:autofillHints="@string/txt_precio_solicitar_clase">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_precio_solicitar_clase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="date"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

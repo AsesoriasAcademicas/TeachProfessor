@@ -2,7 +2,9 @@ package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.R.attr.data
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -32,6 +34,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
+@Suppress("DEPRECATION")
 class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
     val iRegistraseControlador = RegistrarseControlador(this)
@@ -79,25 +82,84 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                 val alertDialog = builder.create()
                 alertDialog.show()
 
-                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
-                url = url.replace(" ","%20")
-                url = url.replace("#","%23")
-                url = url.replace("-","%2D")
-                url = url.replace("á","%C3%A1")
-                url = url.replace("é","%C3%A9")
-                url = url.replace("í","%C3%AD")
-                url = url.replace("ó","%C3%B3")
-                url = url.replace("ú","%C3%BA")
-                url = url.replace("°","%C2%B0")
-                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                        Response.Listener { response ->
-                            try {
-                                val jsonArray = response.optJSONArray("user")
-                                val jsonObjet = jsonArray.getJSONObject(0)
-                                profesor.id = jsonObjet.getInt("id_profesor")
-                                if(profesor.id == 0){
-                                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/registrar_profesor.php?nombre=$stringNombre&email=$stringEmail" +
-                                                "&telefono=&direccion=&password=$passEncript"
+                if (isNetworkConnected(this)) {
+                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
+                    url = url.replace(" ","%20")
+                    url = url.replace("#","%23")
+                    url = url.replace("-","%2D")
+                    url = url.replace("á","%C3%A1")
+                    url = url.replace("é","%C3%A9")
+                    url = url.replace("í","%C3%AD")
+                    url = url.replace("ó","%C3%B3")
+                    url = url.replace("ú","%C3%BA")
+                    url = url.replace("°","%C2%B0")
+                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                            Response.Listener { response ->
+                                try {
+                                    val jsonArray = response.optJSONArray("user")
+                                    val jsonObjet = jsonArray.getJSONObject(0)
+                                    profesor.id = jsonObjet.getInt("id_profesor")
+                                    if(profesor.id == 0){
+                                            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/registrar_profesor.php?nombre=$stringNombre&email=$stringEmail" +
+                                                    "&telefono=&direccion=&password=$passEncript"
+                                            url = url.replace(" ","%20")
+                                            url = url.replace("#","%23")
+                                            url = url.replace("-","%2D")
+                                            url = url.replace("á","%C3%A1")
+                                            url = url.replace("é","%C3%A9")
+                                            url = url.replace("í","%C3%AD")
+                                            url = url.replace("ó","%C3%B3")
+                                            url = url.replace("ú","%C3%BA")
+                                            url = url.replace("°","%C2%B0")
+                                            val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                                                    Response.Listener { response ->
+                                                        try {
+                                                            if (response.getString("success") == "1"){
+                                                                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
+                                                                url = url.replace(" ","%20")
+                                                                url = url.replace("#","%23")
+                                                                url = url.replace("-","%2D")
+                                                                url = url.replace("á","%C3%A1")
+                                                                url = url.replace("é","%C3%A9")
+                                                                url = url.replace("í","%C3%AD")
+                                                                url = url.replace("ó","%C3%B3")
+                                                                url = url.replace("ú","%C3%BA")
+                                                                url = url.replace("°","%C2%B0")
+                                                                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                                                                    Response.Listener { response ->
+                                                                        try {
+                                                                            val jsonArray = response.optJSONArray("user")
+                                                                            val jsonObjet = jsonArray.getJSONObject(0)
+                                                                            profesor.id = jsonObjet.getInt("id_profesor")
+                                                                            if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
+                                                                                intentRegistry.putExtra("email", stringEmail)
+                                                                                alertDialog.dismiss()
+                                                                                startActivity(intentRegistry)
+                                                                            }
+                                                                        } catch (e: JSONException) {
+                                                                            e.printStackTrace()
+                                                                        }
+                                                                    },
+                                                                    Response.ErrorListener { error ->
+                                                                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                                                        alertDialog.dismiss()
+                                                                    })
+                                                                request?.add(jsonObjectRequest)
+                                                            } else if(response.getString("success") == "0") {
+                                                                Toast.makeText(this, "\n" + "Ocurrió un error en el registro de su información!", Toast.LENGTH_SHORT).show()
+                                                                alertDialog.dismiss()
+                                                            }
+                                                        } catch (e: JSONException) {
+                                                            e.printStackTrace()
+                                                        }
+                                                    },
+                                                    Response.ErrorListener { error ->
+                                                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
+                                                    })
+                                            request?.add(jsonObjectRequest)
+                                    } else {
+                                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
                                         url = url.replace(" ","%20")
                                         url = url.replace("#","%23")
                                         url = url.replace("-","%2D")
@@ -110,40 +172,13 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                                                 Response.Listener { response ->
                                                     try {
-                                                        if (response.getString("success") == "1"){
-                                                            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
-                                                            url = url.replace(" ","%20")
-                                                            url = url.replace("#","%23")
-                                                            url = url.replace("-","%2D")
-                                                            url = url.replace("á","%C3%A1")
-                                                            url = url.replace("é","%C3%A9")
-                                                            url = url.replace("í","%C3%AD")
-                                                            url = url.replace("ó","%C3%B3")
-                                                            url = url.replace("ú","%C3%BA")
-                                                            url = url.replace("°","%C2%B0")
-                                                            val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                                                                Response.Listener { response ->
-                                                                    try {
-                                                                        val jsonArray = response.optJSONArray("user")
-                                                                        val jsonObjet = jsonArray.getJSONObject(0)
-                                                                        profesor.id = jsonObjet.getInt("id_profesor")
-                                                                        if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
-                                                                            intentRegistry.putExtra("email", stringEmail)
-                                                                            alertDialog.dismiss()
-                                                                            startActivity(intentRegistry)
-                                                                        }
-                                                                    } catch (e: JSONException) {
-                                                                        e.printStackTrace()
-                                                                    }
-                                                                },
-                                                                Response.ErrorListener { error ->
-                                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
-                                                                    alertDialog.dismiss()
-                                                                })
-                                                            request?.add(jsonObjectRequest)
-                                                        } else if(response.getString("success") == "0") {
-                                                            Toast.makeText(this, "\n" + "Ocurrió un error en el registro de su información!", Toast.LENGTH_SHORT).show()
+                                                        val jsonArray = response.optJSONArray("user")
+                                                        val jsonObjet = jsonArray.getJSONObject(0)
+                                                        profesor.id = jsonObjet.getInt("id_profesor")
+                                                        if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
+                                                            intentRegistry.putExtra("email", stringEmail)
                                                             alertDialog.dismiss()
+                                                            startActivity(intentRegistry)
                                                         }
                                                     } catch (e: JSONException) {
                                                         e.printStackTrace()
@@ -154,47 +189,20 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
                                                     alertDialog.dismiss()
                                                 })
                                         request?.add(jsonObjectRequest)
-                                } else {
-                                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
-                                    url = url.replace(" ","%20")
-                                    url = url.replace("#","%23")
-                                    url = url.replace("-","%2D")
-                                    url = url.replace("á","%C3%A1")
-                                    url = url.replace("é","%C3%A9")
-                                    url = url.replace("í","%C3%AD")
-                                    url = url.replace("ó","%C3%B3")
-                                    url = url.replace("ú","%C3%BA")
-                                    url = url.replace("°","%C2%B0")
-                                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                                            Response.Listener { response ->
-                                                try {
-                                                    val jsonArray = response.optJSONArray("user")
-                                                    val jsonObjet = jsonArray.getJSONObject(0)
-                                                    profesor.id = jsonObjet.getInt("id_profesor")
-                                                    if (iRegistraseControlador.insertUser(this, persona, profesor.id) == 1) {
-                                                        intentRegistry.putExtra("email", stringEmail)
-                                                        alertDialog.dismiss()
-                                                        startActivity(intentRegistry)
-                                                    }
-                                                } catch (e: JSONException) {
-                                                    e.printStackTrace()
-                                                }
-                                            },
-                                            Response.ErrorListener { error ->
-                                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
-                                                alertDialog.dismiss()
-                                            })
-                                    request?.add(jsonObjectRequest)
+                                    }
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        },
-                        Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
-                            alertDialog.dismiss()
-                        })
-                request?.add(jsonObjectRequest)
+                            },
+                            Response.ErrorListener { error ->
+                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                                alertDialog.dismiss()
+                            })
+                    request?.add(jsonObjectRequest)
+                } else{
+                    Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                    alertDialog.dismiss()
+                }
             }
         }
 
@@ -211,6 +219,12 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

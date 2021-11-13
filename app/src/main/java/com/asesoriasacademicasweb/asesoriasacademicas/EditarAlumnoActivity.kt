@@ -1,7 +1,9 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
@@ -23,6 +25,7 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IEditarAlumnoVista
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
 
+@Suppress("DEPRECATION")
 class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
 
     val iEditarAlumnoControlador = EditarAlumnoControlador(this)
@@ -49,58 +52,65 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
         builder.setCancelable(false)
         val alertDialog = builder.create()
 
-        if(persona != null){
-            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$emailEstudiante"
-            url = url.replace(" ","%20")
-            val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                    Response.Listener { response ->
-                        try {
-                            if (response.getString("success") == "1") {
-                                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_perfil.php?email=$emailEstudiante"
-                                url = url.replace(" ","%20")
-                                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                                        Response.Listener { response ->
-                                            try {
-                                                val jsonArray = response.optJSONArray("user")
-                                                val jsonObjet = jsonArray.getJSONObject(0)
-                                                persona.nombre = jsonObjet.getString("nombre")
-                                                persona.telefono = jsonObjet.getString("telefono")
-                                                persona.direccion = jsonObjet.getString("direccion")
-                                                persona.email = jsonObjet.getString("email")
+        if (isNetworkConnected(this)) {
 
-                                                nombre?.setText(persona.nombre)
-                                                telefono?.setText(persona.telefono)
-                                                direccion?.setText(persona.direccion)
-                                                email?.setText(persona.email)
+            if(persona != null){
+                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$emailEstudiante"
+                url = url.replace(" ","%20")
+                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                        Response.Listener { response ->
+                            try {
+                                if (response.getString("success") == "1") {
+                                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_perfil.php?email=$emailEstudiante"
+                                    url = url.replace(" ","%20")
+                                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                                            Response.Listener { response ->
+                                                try {
+                                                    val jsonArray = response.optJSONArray("user")
+                                                    val jsonObjet = jsonArray.getJSONObject(0)
+                                                    persona.nombre = jsonObjet.getString("nombre")
+                                                    persona.telefono = jsonObjet.getString("telefono")
+                                                    persona.direccion = jsonObjet.getString("direccion")
+                                                    persona.email = jsonObjet.getString("email")
+
+                                                    nombre?.setText(persona.nombre)
+                                                    telefono?.setText(persona.telefono)
+                                                    direccion?.setText(persona.direccion)
+                                                    email?.setText(persona.email)
+                                                    alertDialog.dismiss()
+                                                } catch (e: JSONException) {
+                                                    e.printStackTrace()
+                                                }
+                                            },
+                                            Response.ErrorListener { error ->
+                                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
                                                 alertDialog.dismiss()
-                                            } catch (e: JSONException) {
-                                                e.printStackTrace()
-                                            }
-                                        },
-                                        Response.ErrorListener { error ->
-                                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
-                                            alertDialog.dismiss()
-                                        })
-                                request?.add(jsonObjectRequest)
+                                            })
+                                    request?.add(jsonObjectRequest)
 
-                            } else if (response.getString("success") == "0") {
-                                Toast.makeText(this, "\n" + "Ocurrio un error al cargar el perfil!", Toast.LENGTH_SHORT).show();
-                                alertDialog.dismiss()
+                                } else if (response.getString("success") == "0") {
+                                    Toast.makeText(this, "\n" + "Ocurrio un error al cargar el perfil!", Toast.LENGTH_SHORT).show();
+                                    alertDialog.dismiss()
+                                }
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
                             }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-                    },
-                    Response.ErrorListener { error ->
-                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
-                        alertDialog.dismiss()
-                    })
-            request?.add(jsonObjectRequest)
-        } else {
-            nombre?.setText(persona.nombre)
-            telefono?.setText(persona.telefono)
-            direccion?.setText(persona.direccion)
-            email?.setText(persona.email)
+                        },
+                        Response.ErrorListener { error ->
+                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss()
+                        })
+                request?.add(jsonObjectRequest)
+            } else {
+                nombre?.setText(persona.nombre)
+                telefono?.setText(persona.telefono)
+                direccion?.setText(persona.direccion)
+                email?.setText(persona.email)
+                alertDialog.dismiss()
+            }
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
             alertDialog.dismiss()
         }
 
@@ -128,33 +138,39 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
 
             if(iEditarAlumnoControlador.onEditAlumno(this, stringNombre, stringEmail, stringTelefono, stringDireccion) == -1) {
                     alertDialog.show()
-                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_perfil.php?nombre=$stringNombre&email=$stringEmail" +
-                            "&telefono=$stringTelefono&direccion=$stringDireccion"
-                    url = url.replace(" ","%20")
-                    url = url.replace("#","%23")
-                    url = url.replace("-","%2D")
-                    url = url.replace("á","%C3%A1")
-                    url = url.replace("é","%C3%A9")
-                    url = url.replace("í","%C3%AD")
-                    url = url.replace("ó","%C3%B3")
-                    url = url.replace("ú","%C3%BA")
-                    url = url.replace("°","%C2%B0")
-                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                            Response.Listener { response ->
-                                if (response.getString("success") == "1"){
-                                    intentEditProfile.putExtra("email", emailBuscado!!)
+
+                    if (isNetworkConnected(this)) {
+                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_perfil.php?nombre=$stringNombre&email=$stringEmail" +
+                                "&telefono=$stringTelefono&direccion=$stringDireccion&password="
+                        url = url.replace(" ","%20")
+                        url = url.replace("#","%23")
+                        url = url.replace("-","%2D")
+                        url = url.replace("á","%C3%A1")
+                        url = url.replace("é","%C3%A9")
+                        url = url.replace("í","%C3%AD")
+                        url = url.replace("ó","%C3%B3")
+                        url = url.replace("ú","%C3%BA")
+                        url = url.replace("°","%C2%B0")
+                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                                Response.Listener { response ->
+                                    if (response.getString("success") == "1"){
+                                        intentEditProfile.putExtra("email", emailBuscado!!)
+                                        alertDialog.dismiss()
+                                        startActivity(intentEditProfile)
+                                    } else if(response.getString("error") == "0") {
+                                        Toast.makeText(this, "\n" + "Ocurrió un error en la actualización del alumno1!", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
+                                    }
+                                },
+                                Response.ErrorListener { error ->
+                                    Toast.makeText(this, "\n" + "Ocurrió un error en la actualización del alumno2!", Toast.LENGTH_SHORT).show();
                                     alertDialog.dismiss()
-                                    startActivity(intentEditProfile)
-                                } else if(response.getString("error") == "0") {
-                                    Toast.makeText(this, "\n" + "Ocurrió un error en la actualización del alumno!", Toast.LENGTH_SHORT).show()
-                                    alertDialog.dismiss()
-                                }
-                            },
-                            Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización del alumno!", Toast.LENGTH_SHORT).show();
-                                alertDialog.dismiss()
-                            })
-                    request?.add(jsonObjectRequest)
+                                })
+                        request?.add(jsonObjectRequest)
+                    } else{
+                        Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                        alertDialog.dismiss()
+                    }
                 }
         }
     }
@@ -210,5 +226,11 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }

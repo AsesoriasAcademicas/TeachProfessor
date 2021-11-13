@@ -3,7 +3,9 @@ package com.asesoriasacademicasweb.asesoriasacademicas
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -25,10 +27,13 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IEditarClaseVista
 import com.google.android.material.radiobutton.MaterialRadioButton
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
+import org.json.JSONObject
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
 
     var calendar = Calendar.getInstance()
@@ -49,6 +54,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         request = Volley.newRequestQueue(this)
 
         var idClase= getIntent().getStringExtra("id_clase")
+        var idestudiante = 0
+        var precio = 0
         var obj = Modelo()
         var clase = Clase()
         var tutoria = Tutoria()
@@ -75,10 +82,13 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val autotextView= findViewById<AutoCompleteTextView>(R.id.spn_materia_edit)
         autotextView.requestFocus()
         val autotextViewTema= findViewById<AutoCompleteTextView>(R.id.spn_tema_edit)
+        val autotextViewAlumno= findViewById<AutoCompleteTextView>(R.id.spn_alumno)
         var inquietudes: EditText? = findViewById<EditText>(R.id.txt_inquietudes_editar_clase)
         var fecha = findViewById<TextInputEditText>(R.id.txt_fecha_editar_clase)
         var tiempo = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
+        val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
         val duracion= findViewById<TextInputEditText>(R.id.txt_duracion_editar_clase)
+        val precioClase = findViewById<TextInputEditText>(R.id.txt_precio_editar_clase)
 
         clase = obj.buscarClase(this, idClase.toString())
         var builder = AlertDialog.Builder(this)
@@ -88,47 +98,58 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val alertDialog = builder.create()
         alertDialog.show()
 
-        if(clase.id == 0){
-            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
-            url = url.replace(" ","%20")
-            val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                    Response.Listener { response ->
-                        try {
-                            val jsonArray = response.optJSONArray("class")
-                            val jsonObjet = jsonArray.getJSONObject(0)
-                            clase.id = jsonObjet.getInt("id_clase")
-                            clase.fecha = jsonObjet.getString("fecha")
-                            clase.hora = jsonObjet.getString("hora")
-                            clase.duracion = jsonObjet.getString("duracion")
-                            clase.materia = jsonObjet.getString("materia")
-                            clase.tema = jsonObjet.getString("tema")
-                            clase.inquietudes = jsonObjet.getString("inquietudes")
-                            clase.estado = jsonObjet.getString("estado")
+        if (isNetworkConnected(this)) {
 
-                            autotextView.setText(clase.materia, false)
-                            autotextViewTema.setText(clase.tema, false)
-                            inquietudes?.setText(clase.inquietudes)
-                            fecha?.setText(clase.fecha)
-                            tiempo?.setText(clase.hora)
-                            duracion?.setText(clase.duracion)
+            if(clase.id == 0){
+                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
+                url = url.replace(" ","%20")
+                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                        Response.Listener { response ->
+                            try {
+                                val jsonArray = response.optJSONArray("class")
+                                val jsonObjet = jsonArray.getJSONObject(0)
+                                clase.id = jsonObjet.getInt("id_clase")
+                                clase.fecha = jsonObjet.getString("fecha")
+                                clase.hora = jsonObjet.getString("hora")
+                                clase.duracion = jsonObjet.getString("duracion")
+                                clase.materia = jsonObjet.getString("materia")
+                                clase.tema = jsonObjet.getString("tema")
+                                clase.inquietudes = jsonObjet.getString("inquietudes")
+                                clase.estado = jsonObjet.getString("estado")
+                                clase.idEstudiante = jsonObjet.getInt("id_estudiante")
+                                precio = jsonObjet.getInt("precio")
+
+                                autotextView.setText(clase.materia, false)
+                                autotextViewTema.setText(clase.tema, false)
+                                inquietudes?.setText(clase.inquietudes)
+                                fecha?.setText(clase.fecha)
+                                tiempo?.setText(clase.hora)
+                                idestudiante = clase.idEstudiante
+                                duracion?.setText(clase.duracion)
+                                precioClase?.setText(Integer.toString(precio))
+                                alertDialog.dismiss()
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                            }
+                        },
+                        Response.ErrorListener { error ->
+                            Toast.makeText(this, "\n" + "Ocurrió un error cargando la infomación de su clase!", Toast.LENGTH_SHORT).show()
                             alertDialog.dismiss()
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-                    },
-                    Response.ErrorListener { error ->
-                        Toast.makeText(this, "\n" + "Ocurrió un error cargando la infomación de su clase!", Toast.LENGTH_SHORT).show()
-                        alertDialog.dismiss()
-                    })
-            request?.add(jsonObjectRequest)
-        }
-        else{
-            autotextView.setText(clase.materia, false)
-            autotextViewTema.setText(clase.tema, false)
-            inquietudes?.setText(clase.inquietudes)
-            fecha?.setText(clase.fecha)
-            tiempo?.setText(clase.hora)
-            duracion?.setText(clase.duracion)
+                        })
+                request?.add(jsonObjectRequest)
+            }
+            else{
+                autotextView.setText(clase.materia, false)
+                autotextViewTema.setText(clase.tema, false)
+                inquietudes?.setText(clase.inquietudes)
+                fecha?.setText(clase.fecha)
+                tiempo?.setText(clase.hora)
+                duracion?.setText(clase.duracion)
+                alertDialog.dismiss()
+            }
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
             alertDialog.dismiss()
         }
 
@@ -378,6 +399,81 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val adapterToolsOffice = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, herramientasOfimaticas)
         autotextView.setAdapter(adapter)
 
+        request = Volley.newRequestQueue(this)
+
+        if (isNetworkConnected(this)) {
+
+            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
+            url = url.replace(" ", "%20")
+            val jsonObjectRequest = JsonObjectRequest(
+                    Request.Method.GET, url, null,
+                    Response.Listener { response ->
+                        try {
+                            var jsonObjet: JSONObject
+                            val jsonArray = response.optJSONArray("listaAlumnos")
+                            for (i in 0 until jsonArray.length()) {
+                                var estudiante = Estudiante()
+                                jsonObjet = jsonArray.getJSONObject(i)
+                                estudiante.id = jsonObjet.getInt("id_estudiante")
+                                estudiante.nombre = jsonObjet.getString("nombre")
+                                estudiante.email = jsonObjet.getString("email")
+                                estudiante.telefono = jsonObjet.getString("telefono")
+                                estudiante.direccion = jsonObjet.getString("direccion")
+                                estudiante.contrasenia = jsonObjet.getString("password")
+                                estudiantes.add(estudiante)
+                            }
+                            val adaptador: ArrayAdapter<Estudiante> =
+                                    ArrayAdapter(this, R.layout.activity_listview, R.id.label, estudiantes)
+                            for (i in estudiantes) {
+                                if (i.id == idestudiante) {
+                                    autotextViewAlumno.setText(i.toString(), false)
+                                }
+                            }
+
+                            if (adaptador.count != 0) {
+                                autotextViewAlumno?.setAdapter(adaptador)
+                                alertDialog.dismiss()
+
+                            } else {
+                                val mensajeClasesVacio: ArrayList<String> = ArrayList()
+                                mensajeClasesVacio.add("No hay estudiantes registrados")
+                                val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                                        this,
+                                        R.layout.activity_listview,
+                                        R.id.label_empty,
+                                        mensajeClasesVacio
+                                )
+                                autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                                alertDialog.dismiss()
+                            }
+                        } catch (e: JSONException) {
+                            val mensajeClasesVacio: ArrayList<String> = ArrayList()
+                            mensajeClasesVacio.add("No hay estudiantes registrados")
+                            val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                                    this,
+                                    R.layout.activity_listview,
+                                    R.id.label_empty,
+                                    mensajeClasesVacio
+                            )
+                            autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                            alertDialog.dismiss()
+                        }
+                    },
+                    Response.ErrorListener { error ->
+                        Toast.makeText(
+                                this,
+                                "\n" + "Ocurrió un error al cargar los estudiantes!",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                        alertDialog.dismiss()
+                    })
+            request?.add(jsonObjectRequest)
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+            alertDialog.dismiss()
+        }
+
         autotextView.onItemClickListener = AdapterView.OnItemClickListener{
             parent,view,position,id->
             materiaSeleccionada = parent.getItemAtPosition(position).toString()
@@ -436,6 +532,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             val stringFecha = fecha?.text.toString().trim()
             val stringHoraMinutos = horaMinutos?.text.toString().trim()
             val stringDuracion = duracion?.text.toString().trim()
+            var stringPrecio = precioClase?.text.toString().trim()
 
             if(iEditarClaseControlador.onEditClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, clase.estado, estudiante.id) == -1) {
                 tutoria.materia = stringMateria
@@ -456,34 +553,41 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                     var estadoClase = clase.estado
                     alertDialog.show()
 
-                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_clase.php?materia=$stringMateria&tema=$stringTema" +
-                            "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&idClase=$idClase"
-                    url = url.replace(" ","%20")
-                    url = url.replace("#","%23")
-                    url = url.replace("-","%2D")
-                    url = url.replace("á","%C3%A1")
-                    url = url.replace("é","%C3%A9")
-                    url = url.replace("í","%C3%AD")
-                    url = url.replace("ó","%C3%B3")
-                    url = url.replace("ú","%C3%BA")
-                    url = url.replace("°","%C2%B0")
-                    println(url)
-                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                            Response.Listener { response ->
-                                if (response.getString("success") == "1"){
-                                    intentDetalleClase.putExtra("email", email);
-                                    alertDialog.dismiss()
-                                    startActivity(intentDetalleClase)
-                                } else if(response.getString("error") == "0") {
+                    if (isNetworkConnected(this)) {
+
+                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_clase.php?materia=$stringMateria&tema=$stringTema" +
+                                "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&precio=$stringPrecio&idClase=$idClase"
+                        url = url.replace(" ","%20")
+                        url = url.replace("#","%23")
+                        url = url.replace("-","%2D")
+                        url = url.replace("á","%C3%A1")
+                        url = url.replace("é","%C3%A9")
+                        url = url.replace("í","%C3%AD")
+                        url = url.replace("ó","%C3%B3")
+                        url = url.replace("ú","%C3%BA")
+                        url = url.replace("°","%C2%B0")
+                        println(url)
+                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                                Response.Listener { response ->
+                                    if (response.getString("success") == "1"){
+                                        intentDetalleClase.putExtra("email", email)
+                                        alertDialog.dismiss()
+                                        startActivity(intentDetalleClase)
+                                    } else if(response.getString("error") == "0") {
+                                        Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
+                                    }
+                                },
+                                Response.ErrorListener { error ->
                                     Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show()
                                     alertDialog.dismiss()
-                                }
-                            },
-                            Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su clase!", Toast.LENGTH_SHORT).show()
-                                alertDialog.dismiss()
-                            })
-                    request?.add(jsonObjectRequest)
+                                })
+                        request?.add(jsonObjectRequest)
+
+                    } else{
+                        Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                        alertDialog.dismiss()
+                    }
                 } else {
                     Toast.makeText(this, "Transaccion fallida", Toast.LENGTH_SHORT).show()
                     alertDialog.dismiss()
@@ -541,8 +645,10 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             val intentCancelar = Intent(this, PopupDetalleClaseActivity::class.java)
             var idBusqueda = clase.id.toString()
             val email= getIntent().getStringExtra("email")
+            val fecha= getIntent().getStringExtra("fecha")
             intentCancelar.putExtra("email", email)
             intentCancelar.putExtra("id_clase", idBusqueda)
+            intentCancelar.putExtra("fecha", fecha)
             startActivity(intentCancelar)
         }
 
@@ -588,8 +694,10 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                     val intentLogout = Intent(this, PopupDetalleClaseActivity::class.java)
                     var idClase= getIntent().getStringExtra("id_clase")
                     val email= getIntent().getStringExtra("email")
+                    val fecha= getIntent().getStringExtra("fecha")
                     intentLogout.putExtra("id_clase", idClase);
                     intentLogout.putExtra("email", email);
+                    intentLogout.putExtra("fecha", fecha);
                     startActivity(intentLogout)
                 }
                 .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
@@ -634,5 +742,11 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }

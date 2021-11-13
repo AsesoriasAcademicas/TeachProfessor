@@ -1,7 +1,9 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
@@ -20,6 +22,7 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IGestionarAlumnosVis
 import org.json.JSONException
 import org.json.JSONObject
 
+@Suppress("DEPRECATION")
 class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
 
 
@@ -36,46 +39,61 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
         val alertDialog = builder.create()
         alertDialog.show()
 
-        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
-        url = url.replace(" ", "%20")
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            Response.Listener { response ->
-                try {
-                    val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
-                    var jsonObjet: JSONObject
-                    val jsonArray = response.optJSONArray("listaAlumnos")
-                    for (i in 0 until jsonArray.length()) {
-                        var estudiante = Estudiante()
-                        jsonObjet = jsonArray.getJSONObject(i)
-                        estudiante.id = jsonObjet.getInt("id_estudiante")
-                        estudiante.nombre = jsonObjet.getString("nombre")
-                        estudiante.email = jsonObjet.getString("email")
-                        estudiante.telefono = jsonObjet.getString("telefono")
-                        estudiante.direccion = jsonObjet.getString("direccion")
-                        estudiante.contrasenia = jsonObjet.getString("password")
-                        estudiantes.add(estudiante)
-                    }
-                    val listView: ListView? = findViewById(R.id.listView_class)
-                    val adaptador: ArrayAdapter<Estudiante> =
-                        ArrayAdapter(this, R.layout.activity_listview, R.id.label, estudiantes)
+        if (isNetworkConnected(this)) {
 
-                    if (adaptador.count != 0) {
-                        listView?.setAdapter(adaptador)
-                        alertDialog.dismiss()
-                        listView?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-                            val intentEditarAlumno =
-                                Intent(this, EditarAlumnoActivity::class.java)
-                            println(estudiantes[position].email)
-                            intentEditarAlumno.putExtra(
-                                "email_estudiante",
-                                estudiantes[position].email
+            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
+            url = url.replace(" ", "%20")
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.GET, url, null,
+                Response.Listener { response ->
+                    try {
+                        val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
+                        var jsonObjet: JSONObject
+                        val jsonArray = response.optJSONArray("listaAlumnos")
+                        for (i in 0 until jsonArray.length()) {
+                            var estudiante = Estudiante()
+                            jsonObjet = jsonArray.getJSONObject(i)
+                            estudiante.id = jsonObjet.getInt("id_estudiante")
+                            estudiante.nombre = jsonObjet.getString("nombre")
+                            estudiante.email = jsonObjet.getString("email")
+                            estudiante.telefono = jsonObjet.getString("telefono")
+                            estudiante.direccion = jsonObjet.getString("direccion")
+                            estudiante.contrasenia = jsonObjet.getString("password")
+                            estudiantes.add(estudiante)
+                        }
+                        val listView: ListView? = findViewById(R.id.listView_class)
+                        val adaptador: ArrayAdapter<Estudiante> =
+                            ArrayAdapter(this, R.layout.activity_listview, R.id.label, estudiantes)
+
+                        if (adaptador.count != 0) {
+                            listView?.setAdapter(adaptador)
+                            alertDialog.dismiss()
+                            listView?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+                                val intentEditarAlumno =
+                                    Intent(this, EditarAlumnoActivity::class.java)
+                                println(estudiantes[position].email)
+                                intentEditarAlumno.putExtra(
+                                    "email_estudiante",
+                                    estudiantes[position].email
+                                )
+                                val email = getIntent().getStringExtra("email")
+                                intentEditarAlumno.putExtra("email", email);
+                                startActivity(intentEditarAlumno)
+                            })
+                        } else {
+                            val mensajeClasesVacio: ArrayList<String> = ArrayList()
+                            mensajeClasesVacio.add("No hay estudiantes registrados")
+                            val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                                this,
+                                R.layout.activity_listview,
+                                R.id.label_empty,
+                                mensajeClasesVacio
                             )
-                            val email = getIntent().getStringExtra("email")
-                            intentEditarAlumno.putExtra("email", email);
-                            startActivity(intentEditarAlumno)
-                        })
-                    } else {
+                            listView?.setAdapter(adaptadorEmpty)
+                            alertDialog.dismiss()
+                        }
+                    } catch (e: JSONException) {
+                        val listViewEmpty: ListView? = findViewById(R.id.listView_class)
                         val mensajeClasesVacio: ArrayList<String> = ArrayList()
                         mensajeClasesVacio.add("No hay estudiantes registrados")
                         val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
@@ -84,32 +102,24 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
                             R.id.label_empty,
                             mensajeClasesVacio
                         )
-                        listView?.setAdapter(adaptadorEmpty)
+                        listViewEmpty?.setAdapter(adaptadorEmpty)
                         alertDialog.dismiss()
                     }
-                } catch (e: JSONException) {
-                    val listViewEmpty: ListView? = findViewById(R.id.listView_class)
-                    val mensajeClasesVacio: ArrayList<String> = ArrayList()
-                    mensajeClasesVacio.add("No hay estudiantes registrados")
-                    val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                },
+                Response.ErrorListener { error ->
+                    Toast.makeText(
                         this,
-                        R.layout.activity_listview,
-                        R.id.label_empty,
-                        mensajeClasesVacio
-                    )
-                    listViewEmpty?.setAdapter(adaptadorEmpty)
+                        "\n" + "Ocurrió un error al cargar los estudiantes!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     alertDialog.dismiss()
-                }
-            },
-            Response.ErrorListener { error ->
-                Toast.makeText(
-                    this,
-                    "\n" + "Ocurrió un error al cargar los estudiantes!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                alertDialog.dismiss()
-            })
-        request?.add(jsonObjectRequest)
+                })
+            request?.add(jsonObjectRequest)
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+            alertDialog.dismiss()
+        }
 
         val btnAgregarAlumno = findViewById<Button>(R.id.btn_agregar_gestionar_alumno)
         btnAgregarAlumno.setOnClickListener{
@@ -165,5 +175,11 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
 
     override fun onManagementError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }

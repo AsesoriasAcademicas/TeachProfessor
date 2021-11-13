@@ -2,7 +2,9 @@ package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -21,6 +23,7 @@ import org.json.JSONException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("DEPRECATION")
 class GananciasActivity: AppCompatActivity(), IGananciasVista {
 
     var request: RequestQueue? = null
@@ -91,35 +94,41 @@ class GananciasActivity: AppCompatActivity(), IGananciasVista {
             val alertDialog = builder.create()
             alertDialog.show()
 
-            if(!fecha_inicio.text.toString().isEmpty() && !fecha_fin.text.toString().isEmpty()){
-                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/ganancias_profesor.php?email=$stringEmail&fecha_inicio=${fecha_inicio.text}&fecha_fin=${fecha_fin.text}"
-                url = url.replace(" ","%20")
+            if (isNetworkConnected(this)) {
 
-                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                        Response.Listener { response ->
-                            try {
-                                val jsonArray = response.optJSONArray("ganancias")
-                                val jsonObjet = jsonArray.getJSONObject(0)
-                                var ganancia_clases = jsonObjet.getInt("GANANCIA")
-                                var fondo_clases= jsonObjet.getInt("FONDO")
-                                var total_clases = jsonObjet.getInt("TOTAL")
-                                ganancia?.setText("$ " + ganancia_clases.toString())
-                                fondo?.setText("$ " + fondo_clases.toString())
-                                total?.setText("$ " + total_clases.toString())
+                if(!fecha_inicio.text.toString().isEmpty() && !fecha_fin.text.toString().isEmpty()){
+                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/ganancias_profesor.php?email=$stringEmail&fecha_inicio=${fecha_inicio.text}&fecha_fin=${fecha_fin.text}"
+                    url = url.replace(" ","%20")
+
+                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                            Response.Listener { response ->
+                                try {
+                                    val jsonArray = response.optJSONArray("ganancias")
+                                    val jsonObjet = jsonArray.getJSONObject(0)
+                                    var ganancia_clases = jsonObjet.getInt("GANANCIA")
+                                    var fondo_clases= jsonObjet.getInt("FONDO")
+                                    var total_clases = jsonObjet.getInt("TOTAL")
+                                    ganancia?.setText("$ " + ganancia_clases.toString())
+                                    fondo?.setText("$ " + fondo_clases.toString())
+                                    total?.setText("$ " + total_clases.toString())
+                                    alertDialog?.dismiss()
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
+                                }
+                            },
+                            Response.ErrorListener { error ->
+                                Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
                                 alertDialog?.dismiss()
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        },
-                        Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
-                            alertDialog?.dismiss()
-                        })
-                request?.add(jsonObjectRequest)
-            }
-            else{
-                Toast.makeText(this, "\n" + "Por favor ingresa los rangos de fecha y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
-                alertDialog?.dismiss()
+                            })
+                    request?.add(jsonObjectRequest)
+                }
+                else{
+                    Toast.makeText(this, "\n" + "Por favor ingresa los rangos de fecha y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
+                    alertDialog?.dismiss()
+                }
+            } else{
+                Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                alertDialog.dismiss()
             }
         }
     }
@@ -130,5 +139,11 @@ class GananciasActivity: AppCompatActivity(), IGananciasVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }

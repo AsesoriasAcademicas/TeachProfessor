@@ -1,10 +1,11 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -30,6 +31,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
+@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity(), ILoginVista{
 
     val iLoginControlador = LoginControlador(this)
@@ -59,89 +61,95 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
         }
 
         val btnLogin = findViewById<Button>(R.id.btn_iniciar_sesion_login)
-        btnLogin.setOnClickListener {
-                stringEmail = email?.text.toString().trim()
-                stringPass = password?.text.toString().trim()
 
-                val passEncript = encriptar(stringPass)
+            btnLogin.setOnClickListener {
+                    stringEmail = email?.text.toString().trim()
+                    stringPass = password?.text.toString().trim()
 
-                val intentLogin = Intent(this, InicioActivity::class.java)
-                var builder = AlertDialog.Builder(this)
-                val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
-                builder.setView(dialogView)
-                builder.setCancelable(false)
-                val alertDialog = builder.create()
-                alertDialog.show()
+                    val passEncript = encriptar(stringPass)
 
-                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
-                url = url.replace(" ", "%20")
-                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                    Response.Listener { response ->
-                        try {
-                            if (response.getString("success") == "1") {
-                                if (iLoginControlador.onLogin(
-                                        this,
-                                        stringEmail,
-                                        passEncript
-                                    ) == -1
-                                ) {
-                                    intentLogin.putExtra("email", stringEmail)
-                                    alertDialog.dismiss()
-                                    startActivity(intentLogin)
-                                } else {
-                                    var url =
-                                        "https://webserviceasesoriasacademicas.000webhostapp.com/login.php?email=$stringEmail&password=$passEncript"
-                                    url = url.replace(" ", "%20")
-                                    val jsonObjectRequest =
-                                        JsonObjectRequest(Request.Method.GET, url, null,
-                                            Response.Listener { response ->
-                                                try {
-                                                    if (response.getString("success") == "1") {
-                                                        intentLogin.putExtra("email", stringEmail)
-                                                        startActivity(intentLogin)
-                                                    } else if (response.getString("success") == "0") {
-                                                        Toast.makeText(
+                    val intentLogin = Intent(this, InicioActivity::class.java)
+                    var builder = AlertDialog.Builder(this)
+                    val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
+                    builder.setView(dialogView)
+                    builder.setCancelable(false)
+                    val alertDialog = builder.create()
+                    alertDialog.show()
+
+                    if (isNetworkConnected(this)) {
+                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
+                        url = url.replace(" ", "%20")
+                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                                Response.Listener { response ->
+                                    try {
+                                        if (response.getString("success") == "1") {
+                                            if (iLoginControlador.onLogin(
                                                             this,
-                                                            "\n" + "¡La contraseña ingresada es incorrecta!. Por favor inténtalo de nuevo.",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                        alertDialog.dismiss()
-                                                    }
-                                                } catch (e: JSONException) {
-                                                    e.printStackTrace()
-                                                }
-                                            },
-                                            Response.ErrorListener { error ->
-                                                Toast.makeText(
-                                                    this,
-                                                    "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                                            stringEmail,
+                                                            passEncript
+                                                    ) == -1
+                                            ) {
+                                                intentLogin.putExtra("email", stringEmail)
                                                 alertDialog.dismiss()
-                                            })
-                                    request?.add(jsonObjectRequest)
-                                }
-                            } else if (response.getString("success") == "0") {
-                                Toast.makeText(
-                                    this,
-                                    "\n" + "¡No existe un usuario con el email ingresado!. Regístrate para iniciar sesión.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                alertDialog.dismiss()
-                            }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
+                                                startActivity(intentLogin)
+                                            } else {
+                                                var url =
+                                                        "https://webserviceasesoriasacademicas.000webhostapp.com/login.php?email=$stringEmail&password=$passEncript"
+                                                url = url.replace(" ", "%20")
+                                                val jsonObjectRequest =
+                                                        JsonObjectRequest(Request.Method.GET, url, null,
+                                                                Response.Listener { response ->
+                                                                    try {
+                                                                        if (response.getString("success") == "1") {
+                                                                            intentLogin.putExtra("email", stringEmail)
+                                                                            startActivity(intentLogin)
+                                                                        } else if (response.getString("success") == "0") {
+                                                                            Toast.makeText(
+                                                                                    this,
+                                                                                    "\n" + "¡La contraseña ingresada es incorrecta!. Por favor inténtalo de nuevo.",
+                                                                                    Toast.LENGTH_SHORT
+                                                                            ).show()
+                                                                            alertDialog.dismiss()
+                                                                        }
+                                                                    } catch (e: JSONException) {
+                                                                        e.printStackTrace()
+                                                                    }
+                                                                },
+                                                                Response.ErrorListener { error ->
+                                                                    Toast.makeText(
+                                                                            this,
+                                                                            "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!",
+                                                                            Toast.LENGTH_SHORT
+                                                                    ).show()
+                                                                    alertDialog.dismiss()
+                                                                })
+                                                request?.add(jsonObjectRequest)
+                                            }
+                                        } else if (response.getString("success") == "0") {
+                                            Toast.makeText(
+                                                    this,
+                                                    "\n" + "¡No existe un usuario con el email ingresado!. Regístrate para iniciar sesión.",
+                                                    Toast.LENGTH_SHORT
+                                            ).show()
+                                            alertDialog.dismiss()
+                                        }
+                                    } catch (e: JSONException) {
+                                        e.printStackTrace()
+                                    }
+                                },
+                                Response.ErrorListener { error ->
+                                    Toast.makeText(
+                                            this,
+                                            "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
+                                    alertDialog.dismiss()
+                                })
+                        request?.add(jsonObjectRequest)
+                    }else{
+                            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                            alertDialog.dismiss()
                         }
-                    },
-                    Response.ErrorListener { error ->
-                        Toast.makeText(
-                            this,
-                            "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        alertDialog.dismiss()
-                    })
-                request?.add(jsonObjectRequest)
         }
     }
 
@@ -151,6 +159,12 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

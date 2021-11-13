@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -32,6 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
     var calendar = Calendar.getInstance()
@@ -62,6 +65,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         var horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_solicitar_clase)
         var checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_solicitar_clase)
         var fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_solicitar_clase)
+        var precioClase = findViewById<TextInputEditText>(R.id.txt_precio_solicitar_clase)
         fecha?.setText(fechaClase)
         horaMinutos?.setText(horaClase)
 
@@ -342,33 +346,47 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         val alertDialog = builder.create()
         alertDialog.show()
 
-        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
-        url = url.replace(" ", "%20")
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            Response.Listener { response ->
-                try {
-                    var jsonObjet: JSONObject
-                    val jsonArray = response.optJSONArray("listaAlumnos")
-                    for (i in 0 until jsonArray.length()) {
-                        var estudiante = Estudiante()
-                        jsonObjet = jsonArray.getJSONObject(i)
-                        estudiante.id = jsonObjet.getInt("id_estudiante")
-                        estudiante.nombre = jsonObjet.getString("nombre")
-                        estudiante.email = jsonObjet.getString("email")
-                        estudiante.telefono = jsonObjet.getString("telefono")
-                        estudiante.direccion = jsonObjet.getString("direccion")
-                        estudiante.contrasenia = jsonObjet.getString("password")
-                        estudiantes.add(estudiante)
-                    }
-                    val adaptador: ArrayAdapter<Estudiante> =
-                        ArrayAdapter(this, R.layout.activity_listview, R.id.label, estudiantes)
+        if (isNetworkConnected(this)) {
 
-                    if (adaptador.count != 0) {
-                        autotextViewAlumno?.setAdapter(adaptador)
-                        alertDialog.dismiss()
+            var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
+            url = url.replace(" ", "%20")
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.GET, url, null,
+                Response.Listener { response ->
+                    try {
+                        var jsonObjet: JSONObject
+                        val jsonArray = response.optJSONArray("listaAlumnos")
+                        for (i in 0 until jsonArray.length()) {
+                            var estudiante = Estudiante()
+                            jsonObjet = jsonArray.getJSONObject(i)
+                            estudiante.id = jsonObjet.getInt("id_estudiante")
+                            estudiante.nombre = jsonObjet.getString("nombre")
+                            estudiante.email = jsonObjet.getString("email")
+                            estudiante.telefono = jsonObjet.getString("telefono")
+                            estudiante.direccion = jsonObjet.getString("direccion")
+                            estudiante.contrasenia = jsonObjet.getString("password")
+                            estudiantes.add(estudiante)
+                        }
+                        val adaptador: ArrayAdapter<Estudiante> =
+                            ArrayAdapter(this, R.layout.activity_listview, R.id.label, estudiantes)
 
-                    } else {
+                        if (adaptador.count != 0) {
+                            autotextViewAlumno?.setAdapter(adaptador)
+                            alertDialog.dismiss()
+
+                        } else {
+                            val mensajeClasesVacio: ArrayList<String> = ArrayList()
+                            mensajeClasesVacio.add("No hay estudiantes registrados")
+                            val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                                this,
+                                R.layout.activity_listview,
+                                R.id.label_empty,
+                                mensajeClasesVacio
+                            )
+                            autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                            alertDialog.dismiss()
+                        }
+                    } catch (e: JSONException) {
                         val mensajeClasesVacio: ArrayList<String> = ArrayList()
                         mensajeClasesVacio.add("No hay estudiantes registrados")
                         val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
@@ -380,28 +398,21 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                         autotextViewAlumno?.setAdapter(adaptadorEmpty)
                         alertDialog.dismiss()
                     }
-                } catch (e: JSONException) {
-                    val mensajeClasesVacio: ArrayList<String> = ArrayList()
-                    mensajeClasesVacio.add("No hay estudiantes registrados")
-                    val adaptadorEmpty: ArrayAdapter<String> = ArrayAdapter<String>(
+                },
+                Response.ErrorListener { error ->
+                    Toast.makeText(
                         this,
-                        R.layout.activity_listview,
-                        R.id.label_empty,
-                        mensajeClasesVacio
-                    )
-                    autotextViewAlumno?.setAdapter(adaptadorEmpty)
+                        "\n" + "Ocurrió un error al cargar los estudiantes!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     alertDialog.dismiss()
-                }
-            },
-            Response.ErrorListener { error ->
-                Toast.makeText(
-                    this,
-                    "\n" + "Ocurrió un error al cargar los estudiantes!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                alertDialog.dismiss()
-            })
-        request?.add(jsonObjectRequest)
+                })
+            request?.add(jsonObjectRequest)
+
+        } else{
+            Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+            alertDialog.dismiss()
+        }
 
         autotextView.onItemClickListener = AdapterView.OnItemClickListener{
                 parent,view,position,id->
@@ -465,163 +476,185 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             val stringFecha = fecha?.text.toString().trim()
             val stringHoraMinutos = horaMinutos?.text.toString().trim()
             var stringDuracion = duracion?.text.toString().trim()
+            var stringPrecio = precioClase?.text.toString().trim()
 
             val intentInsert = Intent(this, GestionarClaseActivity::class.java)
             profesor = iSolicitarClaseControlador.getTeacher(this,stringEmail.toString())
 
-            if(profesor.id == 0){
-                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
-                url = url.replace(" ","%20")
-                val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
-                        Response.Listener { response ->
-                            try {
-                                val jsonArray = response.optJSONArray("user")
-                                val jsonObjet = jsonArray.getJSONObject(0)
-                                profesor.id = jsonObjet.getInt("id_profesor")
+            if (isNetworkConnected(this)) {
 
-                                if(iSolicitarClaseControlador.onNewClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, "activo", 0, profesor.id) == -1) {
-                                    val clase = Clase(
-                                            0,
-                                            stringFecha,
-                                            stringHoraMinutos,
-                                            stringDuracion,
-                                            stringMateria,
-                                            stringTema,
-                                            stringInquietudes,
-                                            "activo",
-                                            id_estudiante.toInt(),
-                                            profesor.id
-                                    )
+                if(profesor.id == 0){
+                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
+                    url = url.replace(" ","%20")
+                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
+                            Response.Listener { response ->
+                                try {
+                                    val jsonArray = response.optJSONArray("user")
+                                    val jsonObjet = jsonArray.getJSONObject(0)
+                                    profesor.id = jsonObjet.getInt("id_profesor")
 
-                                    var idProfesor = profesor.id
-                                    var idEstudiante = id_estudiante
-                                    var estadoClase = "activo"
-                                    alertDialog.show()
-                                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
-                                            "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
-                                    url = url.replace(" ", "%20")
-                                    url = url.replace("#", "%23")
-                                    url = url.replace("-", "%2D")
-                                    url = url.replace("á", "%C3%A1")
-                                    url = url.replace("é", "%C3%A9")
-                                    url = url.replace("í", "%C3%AD")
-                                    url = url.replace("ó", "%C3%B3")
-                                    url = url.replace("ú", "%C3%BA")
-                                    url = url.replace("°", "%C2%B0")
-                                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                                            Response.Listener { response ->
-                                                if (response.getString("success") == "1") {
-                                                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_clase.php?idEstudiante=0&idProfesor=$idProfesor&fecha=$stringFecha&hora=$stringHoraMinutos"
-                                                    url = url.replace(" ", "%20")
-                                                    System.out.println(url)
-                                                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                                                            Response.Listener { response ->
-                                                                try {
-                                                                    val jsonArray = response.optJSONArray("class")
-                                                                    val jsonObjet = jsonArray.getJSONObject(0)
-                                                                    clase.id = jsonObjet.getInt("id_clase")
-                                                                    if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
-                                                                        intentInsert.putExtra("email", stringEmail)
-                                                                        alertDialog.dismiss()
-                                                                        startActivity(intentInsert)
+                                    if(iSolicitarClaseControlador.onNewClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, "activo", 0, profesor.id) == -1) {
+                                        val clase = Clase(
+                                                0,
+                                                stringFecha,
+                                                stringHoraMinutos,
+                                                stringDuracion,
+                                                stringMateria,
+                                                stringTema,
+                                                stringInquietudes,
+                                                "activo",
+                                                id_estudiante.toInt(),
+                                                profesor.id
+                                        )
+
+                                        var idProfesor = profesor.id
+                                        var idEstudiante = id_estudiante
+                                        var estadoClase = "activo"
+                                        alertDialog.show()
+                                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
+                                                "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&precio=$stringPrecio&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
+                                        url = url.replace(" ", "%20")
+                                        url = url.replace("#", "%23")
+                                        url = url.replace("-", "%2D")
+                                        url = url.replace("á", "%C3%A1")
+                                        url = url.replace("é", "%C3%A9")
+                                        url = url.replace("í", "%C3%AD")
+                                        url = url.replace("ó", "%C3%B3")
+                                        url = url.replace("ú", "%C3%BA")
+                                        url = url.replace("°", "%C2%B0")
+                                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                                                Response.Listener { response ->
+                                                    if (response.getString("success") == "1") {
+                                                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_clase.php?idEstudiante=0&idProfesor=$idProfesor&fecha=$stringFecha&hora=$stringHoraMinutos"
+                                                        url = url.replace(" ", "%20")
+                                                        System.out.println(url)
+                                                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                                                                Response.Listener { response ->
+                                                                    try {
+                                                                        val jsonArray = response.optJSONArray("class")
+                                                                        val jsonObjet = jsonArray.getJSONObject(0)
+                                                                        clase.id = jsonObjet.getInt("id_clase")
+                                                                        if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
+                                                                            intentInsert.putExtra("email", stringEmail)
+                                                                            intentInsert.putExtra("fecha", stringFecha)
+                                                                            alertDialog.dismiss()
+                                                                            startActivity(intentInsert)
+                                                                        }
+                                                                        else{
+                                                                            intentInsert.putExtra("email", stringEmail)
+                                                                            intentInsert.putExtra("fecha", stringFecha)
+                                                                            alertDialog.dismiss()
+                                                                            startActivity(intentInsert)
+                                                                        }
+
+                                                                    } catch (e: JSONException) {
+                                                                        e.printStackTrace()
                                                                     }
-
-                                                                } catch (e: JSONException) {
-                                                                    e.printStackTrace()
-                                                                }
-                                                            },
-                                                            Response.ErrorListener { error ->
-                                                                Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
-                                                                alertDialog.dismiss()
-                                                            })
-                                                    request?.add(jsonObjectRequest)
-                                                } else if (response.getString("error") == "0") {
+                                                                },
+                                                                Response.ErrorListener { error ->
+                                                                    Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
+                                                                    alertDialog.dismiss()
+                                                                })
+                                                        request?.add(jsonObjectRequest)
+                                                    } else if (response.getString("error") == "0") {
+                                                        Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                                        alertDialog.dismiss()
+                                                    }
+                                                },
+                                                Response.ErrorListener { error ->
                                                     Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
                                                     alertDialog.dismiss()
-                                                }
-                                            },
-                                            Response.ErrorListener { error ->
-                                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
-                                                alertDialog.dismiss()
-                                            })
-                                    request?.add(jsonObjectRequest)
-                                }
+                                                })
+                                        request?.add(jsonObjectRequest)
+                                    }
 
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        },
-                        Response.ErrorListener { error ->
-                            Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show()
-                            alertDialog.dismiss()
-                        })
-                request?.add(jsonObjectRequest)
-            } else{
-                if(iSolicitarClaseControlador.onNewClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, "activo", 0, profesor.id) == -1) {
-                    val clase = Clase(
-                            0,
-                            stringFecha,
-                            stringHoraMinutos,
-                            stringDuracion,
-                            stringMateria,
-                            stringTema,
-                            stringInquietudes,
-                            "activo",
-                            id_estudiante.toInt(),
-                            profesor.id
-                    )
-
-                    var idProfesor = profesor.id
-                    var idEstudiante = id_estudiante
-                    var estadoClase = "activo"
-                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
-                            "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
-                    url = url.replace(" ", "%20")
-                    url = url.replace("#", "%23")
-                    url = url.replace("-", "%2D")
-                    url = url.replace("á", "%C3%A1")
-                    url = url.replace("é", "%C3%A9")
-                    url = url.replace("í", "%C3%AD")
-                    url = url.replace("ó", "%C3%B3")
-                    url = url.replace("ú", "%C3%BA")
-                    url = url.replace("°", "%C2%B0")
-                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                            Response.Listener { response ->
-                                if (response.getString("success") == "1") {
-                                    var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_clase.php?idEstudiante=0&idProfesor=$idProfesor&fecha=$stringFecha&hora=$stringHoraMinutos"
-                                    url = url.replace(" ", "%20")
-                                    val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                                            Response.Listener { response ->
-                                                try {
-                                                    val jsonArray = response.optJSONArray("class")
-                                                    val jsonObjet = jsonArray.getJSONObject(0)
-                                                    clase.id = jsonObjet.getInt("id_clase")
-                                                    if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
-                                                        intentInsert.putExtra("email", stringEmail)
-                                                        alertDialog.dismiss()
-                                                        startActivity(intentInsert)
-                                                    }
-
-                                                } catch (e: JSONException) {
-                                                    e.printStackTrace()
-                                                }
-                                            },
-                                            Response.ErrorListener { error ->
-                                                Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
-                                                alertDialog.dismiss()
-                                            })
-                                    request?.add(jsonObjectRequest)
-                                } else if (response.getString("error") == "0") {
-                                    Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
-                                    alertDialog.dismiss()
+                                } catch (e: JSONException) {
+                                    e.printStackTrace()
                                 }
                             },
                             Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show()
                                 alertDialog.dismiss()
                             })
                     request?.add(jsonObjectRequest)
+                } else{
+                    if(iSolicitarClaseControlador.onNewClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, "activo", 0, profesor.id) == -1) {
+                        val clase = Clase(
+                                0,
+                                stringFecha,
+                                stringHoraMinutos,
+                                stringDuracion,
+                                stringMateria,
+                                stringTema,
+                                stringInquietudes,
+                                "activo",
+                                id_estudiante.toInt(),
+                                profesor.id
+                        )
+
+                        var idProfesor = profesor.id
+                        var idEstudiante = id_estudiante
+                        var estadoClase = "activo"
+                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
+                                "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&precio=$stringPrecio&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
+                        url = url.replace(" ", "%20")
+                        url = url.replace("#", "%23")
+                        url = url.replace("-", "%2D")
+                        url = url.replace("á", "%C3%A1")
+                        url = url.replace("é", "%C3%A9")
+                        url = url.replace("í", "%C3%AD")
+                        url = url.replace("ó", "%C3%B3")
+                        url = url.replace("ú", "%C3%BA")
+                        url = url.replace("°", "%C2%B0")
+                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                                Response.Listener { response ->
+                                    if (response.getString("success") == "1") {
+                                        var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_clase.php?idEstudiante=0&idProfesor=$idProfesor&fecha=$stringFecha&hora=$stringHoraMinutos"
+                                        url = url.replace(" ", "%20")
+                                        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                                                Response.Listener { response ->
+                                                    try {
+                                                        val jsonArray = response.optJSONArray("class")
+                                                        val jsonObjet = jsonArray.getJSONObject(0)
+                                                        clase.id = jsonObjet.getInt("id_clase")
+                                                        if (iSolicitarClaseControlador.insertClass(this, clase, clase.id) == 1) {
+                                                            intentInsert.putExtra("email", stringEmail)
+                                                            intentInsert.putExtra("fecha", stringFecha)
+                                                            alertDialog.dismiss()
+                                                            startActivity(intentInsert)
+                                                        }
+                                                        else{
+                                                            intentInsert.putExtra("email", stringEmail)
+                                                            intentInsert.putExtra("fecha", stringFecha)
+                                                            alertDialog.dismiss()
+                                                            startActivity(intentInsert)
+                                                        }
+
+                                                    } catch (e: JSONException) {
+                                                        e.printStackTrace()
+                                                    }
+                                                },
+                                                Response.ErrorListener { error ->
+                                                    Toast.makeText(this, "\n" + "Ocurrió un error cargando la información del estudiante!", Toast.LENGTH_SHORT).show();
+                                                    alertDialog.dismiss()
+                                                })
+                                        request?.add(jsonObjectRequest)
+                                    } else if (response.getString("error") == "0") {
+                                        Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                        alertDialog.dismiss()
+                                    }
+                                },
+                                Response.ErrorListener { error ->
+                                    Toast.makeText(this, "\n" + "Ocurrió un error en el registrar de su clase!", Toast.LENGTH_SHORT).show()
+                                    alertDialog.dismiss()
+                                })
+                        request?.add(jsonObjectRequest)
+                    }
                 }
+
+            } else{
+                Toast.makeText(this, "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_LONG).show()
+                alertDialog.dismiss()
             }
         }
 
@@ -675,6 +708,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             val intentClass = Intent(this, GestionarClaseActivity::class.java)
             val email= getIntent().getStringExtra("email")
             intentClass.putExtra("email", email)
+            intentClass.putExtra("fecha", fechaClase)
             startActivity(intentClass)
         }
 
@@ -723,7 +757,9 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                 .setPositiveButton("Confirmar") { dialog, id ->
                     val intentLogout = Intent(this, GestionarClaseActivity::class.java)
                     val email= getIntent().getStringExtra("email")
+                    val fecha= getIntent().getStringExtra("fecha")
                     intentLogout.putExtra("email", email)
+                    intentLogout.putExtra("fecha", fecha)
                     startActivity(intentLogout)
                 }
                 .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
@@ -768,5 +804,11 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
     override fun onLoginError(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val info = connectivityManager.activeNetworkInfo
+        return !(info == null || !info.isConnected || !info.isAvailable)
     }
 }
