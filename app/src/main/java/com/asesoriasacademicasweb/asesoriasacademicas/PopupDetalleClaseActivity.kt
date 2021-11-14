@@ -286,6 +286,17 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         }
     }
 
+    override fun onBackPressed() {
+        val intentListadoClases = Intent(this, GestionarClaseActivity::class.java)
+        var idClase= getIntent().getStringExtra("id_clase")
+        val email= getIntent().getStringExtra("email")
+        val fecha= getIntent().getStringExtra("fecha")
+        intentListadoClases.putExtra("id_clase", idClase);
+        intentListadoClases.putExtra("email", email);
+        intentListadoClases.putExtra("fecha", fecha);
+        startActivity(intentListadoClases)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true

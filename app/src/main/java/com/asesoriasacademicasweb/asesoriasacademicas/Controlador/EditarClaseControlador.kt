@@ -32,7 +32,7 @@ class EditarClaseControlador(val iEditarClaseVista: IEditarClaseVista): IEditarC
             6 -> this.iEditarClaseVista.onLoginError("El campo hora es inferior a la hora actual")
             7 -> this.iEditarClaseVista.onLoginError("El campo duración no puede estar vacío")
             8 -> this.iEditarClaseVista.onLoginError("El campo duracion debe ser igual o inferior a 6 horas")
-            -1 -> this.iEditarClaseVista.onLoginSuccess("Solicitud satisfactoria")
+            -1 -> this.iEditarClaseVista.onLoginSuccess("La edición de la clase se realizó satisfactoriamente")
         }
         return clase.esValido(context)
     }

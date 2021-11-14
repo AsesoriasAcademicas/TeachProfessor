@@ -705,11 +705,21 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
         val btnCancelarClase = findViewById<Button>(R.id.btn_cancelar_solicitar_clase)
         btnCancelarClase.setOnClickListener{
-            val intentClass = Intent(this, GestionarClaseActivity::class.java)
-            val email= getIntent().getStringExtra("email")
-            intentClass.putExtra("email", email)
-            intentClass.putExtra("fecha", fechaClase)
-            startActivity(intentClass)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar ingreso de la clase")
+            builder.setMessage("¿Seguro que deseas cancelar el ingreso de la clase?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentClass = Intent(this, GestionarClaseActivity::class.java)
+                        val email= getIntent().getStringExtra("email")
+                        val fecha= getIntent().getStringExtra("fecha")
+                        intentClass.putExtra("email", email)
+                        intentClass.putExtra("fecha", fecha)
+                        startActivity(intentClass)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
 
         val btnDisminurDuracion = findViewById<ImageView>(R.id.img_disminuir_duracion_solicitar_clase)

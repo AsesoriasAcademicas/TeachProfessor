@@ -138,6 +138,13 @@ class GestionarAlumnosClase: AppCompatActivity(), IGestionarAlumnosVista {
         }
     }
 
+    override fun onBackPressed() {
+        val intentInicio = Intent(this, InicioActivity::class.java)
+        val email= getIntent().getStringExtra("email")
+        intentInicio.putExtra("email", email);
+        startActivity(intentInicio)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true

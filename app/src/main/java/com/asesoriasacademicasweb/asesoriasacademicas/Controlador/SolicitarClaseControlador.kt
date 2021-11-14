@@ -33,7 +33,7 @@ class SolicitarClaseControlador(var iSolicitarClaseVista: ISolicitarClaseVista) 
             6 -> this.iSolicitarClaseVista.onLoginError("El campo hora es inferior a la hora actual")
             7 -> this.iSolicitarClaseVista.onLoginError("El campo duración no puede estar vacío")
             8 -> this.iSolicitarClaseVista.onLoginError("El campo duracion debe ser igual o inferior a 6 horas")
-            -1 -> this.iSolicitarClaseVista.onLoginSuccess("Solicitud satisfactoria")
+            -1 -> this.iSolicitarClaseVista.onLoginSuccess("El ingreso de la clase se realizó satisfactoriamente")
         }
         return clase.esValido(context)
     }

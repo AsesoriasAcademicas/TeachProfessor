@@ -27,7 +27,7 @@ class RegistrarseControlador(var iRegistrarseVista: IRegistrarseVista) : IRegist
             6 -> this.iRegistrarseVista.onLoginError("La contraseña no coincide, verifica e intenta nuevamente")
             7 -> this.iRegistrarseVista.onLoginError("El campo nombre no es válido")
             8 -> this.iRegistrarseVista.onLoginError("Aún no has aceptado los términos y condiciones de uso de la APP Teach")
-            -1 -> this.iRegistrarseVista.onLoginSuccess("Registro satisfactorio")
+            -1 -> this.iRegistrarseVista.onLoginSuccess("Su registro se ha realizado satisfactoriamente")
         }
         return profesor.registroValido(context, reperContrasenia, booleanCheck)
     }

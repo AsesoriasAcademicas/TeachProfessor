@@ -23,7 +23,7 @@ class EditarAlumnoControlador(val iEditarAlumnoVista: IEditarAlumnoVista) : IEdi
             1 -> this.iEditarAlumnoVista.onLoginError("El campo email no puede estar vacío")
             2 -> this.iEditarAlumnoVista.onLoginError("El campo email no es válido")
             5 -> this.iEditarAlumnoVista.onLoginError("Ya existe un usuario con el email ingresado")
-            -1 -> this.iEditarAlumnoVista.onLoginSuccess("Registro satisfactorio")
+            -1 -> this.iEditarAlumnoVista.onLoginSuccess("La edición del alumno se realizó satisfactoriamente")
         }
         return estudiante.ingresoValido(context)
     }

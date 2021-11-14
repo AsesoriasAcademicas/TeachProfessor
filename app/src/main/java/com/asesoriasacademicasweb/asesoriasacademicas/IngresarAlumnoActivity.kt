@@ -125,9 +125,18 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
 
         val btnCancelarEditarPerfil = findViewById<Button>(R.id.btn_cancelar_ingresar_alumno)
         btnCancelarEditarPerfil.setOnClickListener{
-            val intentMain = Intent(this, GestionarAlumnosClase::class.java)
-            intentMain.putExtra("email", emailBuscado)
-            startActivity(intentMain)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar ingreso del alumno")
+            builder.setMessage("¿Seguro que deseas cancelar el ingreso del alumno?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentMain = Intent(this, GestionarAlumnosClase::class.java)
+                        intentMain.putExtra("email", emailBuscado)
+                        startActivity(intentMain)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
     }
 

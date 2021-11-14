@@ -141,9 +141,19 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
         val btnCancelarEditarPerfil = findViewById<Button>(R.id.btn_cancelar_editar_perfil)
         btnCancelarEditarPerfil.setOnClickListener{
-            val intentMain = Intent(this, InicioActivity::class.java)
-            intentMain.putExtra("email", emailBuscado);
-            startActivity(intentMain)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar edición de perfil")
+            builder.setMessage("¿Seguro que deseas cancelar la edición del perfil?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentMain = Intent(this, InicioActivity::class.java)
+                        val email= getIntent().getStringExtra("email")
+                        intentMain.putExtra("email", emailBuscado);
+                        startActivity(intentMain)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
 
         val btnGuardarEditarPerfil = findViewById<Button>(R.id.btn_guardar_editar_perfil)

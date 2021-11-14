@@ -116,10 +116,19 @@ class EditarAlumnoActivity: AppCompatActivity(), IEditarAlumnoVista {
 
         val btnCancelarEditarAlumno = findViewById<Button>(R.id.btn_cancelar_editar_alumno)
         btnCancelarEditarAlumno.setOnClickListener {
-            val intentInicio = Intent(this, GestionarAlumnosClase::class.java)
-            val email= getIntent().getStringExtra("email")
-            intentInicio.putExtra("email", email)
-            startActivity(intentInicio)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar edición del alumno")
+            builder.setMessage("¿Seguro que deseas cancelar la edición del alumno?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentInicio = Intent(this, GestionarAlumnosClase::class.java)
+                        val email= getIntent().getStringExtra("email")
+                        intentInicio.putExtra("email", email)
+                        startActivity(intentInicio)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
 
         val btnGuardarEditarAlumno = findViewById<Button>(R.id.btn_guardar_editar_alumno)

@@ -22,7 +22,7 @@ class IngresarAlumnoControlador(var iIngresarAlumnoVista: IIngresarAlumnoVista) 
             5 -> this.iIngresarAlumnoVista.onLoginError("Ya existe un usuario con el email ingresado")
             8 -> this.iIngresarAlumnoVista.onLoginError("El campo nombre no es válido")
             9 -> this.iIngresarAlumnoVista.onLoginError("El campo telefono no es válido")
-            -1 -> this.iIngresarAlumnoVista.onLoginSuccess("Registro satisfactorio")
+            -1 -> this.iIngresarAlumnoVista.onLoginSuccess("El ingreso del alumno se realizó satisfactoriamente")
         }
         return estudiante.ingresoValido(context)
     }

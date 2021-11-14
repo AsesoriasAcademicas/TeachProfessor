@@ -642,14 +642,23 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
 
         var btnCancelarEditarClase = findViewById<Button>(R.id.btn_cancelar_editar_clase)
         btnCancelarEditarClase.setOnClickListener{
-            val intentCancelar = Intent(this, PopupDetalleClaseActivity::class.java)
-            var idBusqueda = clase.id.toString()
-            val email= getIntent().getStringExtra("email")
-            val fecha= getIntent().getStringExtra("fecha")
-            intentCancelar.putExtra("email", email)
-            intentCancelar.putExtra("id_clase", idBusqueda)
-            intentCancelar.putExtra("fecha", fecha)
-            startActivity(intentCancelar)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar edición de la clase")
+            builder.setMessage("¿Seguro que deseas cancelar la edición de la clase?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentCancelar = Intent(this, PopupDetalleClaseActivity::class.java)
+                        var idBusqueda = clase.id.toString()
+                        val email= getIntent().getStringExtra("email")
+                        val fecha= getIntent().getStringExtra("fecha")
+                        intentCancelar.putExtra("email", email)
+                        intentCancelar.putExtra("id_clase", idBusqueda)
+                        intentCancelar.putExtra("fecha", fecha)
+                        startActivity(intentCancelar)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
 
         val btnDisminurDuracion = findViewById<ImageView>(R.id.img_disminuir_duracion_editar_clase)

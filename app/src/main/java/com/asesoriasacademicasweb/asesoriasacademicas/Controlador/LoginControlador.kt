@@ -20,7 +20,7 @@ class LoginControlador(var iLoginVista: ILoginVista) : ILoginControlador {
             3 -> this.iLoginVista.onLoginError("El campo contraseña no es válido")
             4 -> this.iLoginVista.onLoginError("No existe un usuario con el email ingresado")
             5 -> this.iLoginVista.onLoginError("El campo constraseña es incorrecta")
-            -1 -> this.iLoginVista.onLoginError("Login satisfactorio")
+            -1 -> this.iLoginVista.onLoginError("Inicio de sesión satisfactorio")
         }
         return estudiante.esValido(context)
     }
