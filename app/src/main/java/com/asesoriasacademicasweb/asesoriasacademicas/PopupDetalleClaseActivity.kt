@@ -4,12 +4,15 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -19,7 +22,9 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Controlador.GestionarClase
 import com.asesoriasacademicasweb.asesoriasacademicas.Model.Clase
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IGestionarClaseVista
 import org.json.JSONException
+import java.util.*
 
+@Suppress("DEPRECATION")
 class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
 
     val iGestionarClaseControlador = GestionarClaseControlador(this)
@@ -33,8 +38,8 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         request = Volley.newRequestQueue(this)
 
         val intentListadoClases = Intent(this, GestionarClaseActivity::class.java)
-        val idClase= getIntent().getStringExtra("id_clase")
-        val stringFecha= getIntent().getStringExtra("fecha")
+        val idClase= intent.getStringExtra("id_clase")
+        val stringFecha= intent.getStringExtra("fecha")
         var clase = Clase()
         val materia: TextView? = findViewById<TextView>(R.id.txv_materia_detalle_clase)
         val tema: TextView? = findViewById<TextView>(R.id.txv_tema_detalle_clase)
@@ -57,6 +62,14 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             if(clase.id == 0){
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
                 url = url.replace(" ","%20")
+                url = url.replace("#","%23")
+                url = url.replace("-","%2D")
+                url = url.replace("á","%C3%A1")
+                url = url.replace("é","%C3%A9")
+                url = url.replace("í","%C3%AD")
+                url = url.replace("ó","%C3%B3")
+                url = url.replace("ú","%C3%BA")
+                url = url.replace("°","%C2%B0")
                 val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                         Response.Listener { response ->
                             try {
@@ -91,11 +104,19 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                                 estado.setOnCheckedChangeListener{buttonView, isChecked ->
                                     if (isChecked){
                                         if(iGestionarClaseControlador.changeStatus(this, "activo", idClase.toString()) == 1) {
-                                            var estado = "activo"
+                                            val estado = "activo"
                                             alertDialog.show()
 
                                             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
-                                            url = url.replace(" ", "%20")
+                                            url = url.replace(" ","%20")
+                                            url = url.replace("#","%23")
+                                            url = url.replace("-","%2D")
+                                            url = url.replace("á","%C3%A1")
+                                            url = url.replace("é","%C3%A9")
+                                            url = url.replace("í","%C3%AD")
+                                            url = url.replace("ó","%C3%B3")
+                                            url = url.replace("ú","%C3%BA")
+                                            url = url.replace("°","%C2%B0")
                                             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                                     Response.Listener { response ->
                                                         if (response.getString("success") == "1") {
@@ -114,11 +135,19 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                                         }
                                     } else {
                                         if(iGestionarClaseControlador.changeStatus(this, "inactivo", idClase.toString()) == 1) {
-                                            var estado = "inactivo"
+                                            val estado = "inactivo"
                                             alertDialog.show()
 
                                             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
-                                            url = url.replace(" ", "%20")
+                                            url = url.replace(" ","%20")
+                                            url = url.replace("#","%23")
+                                            url = url.replace("-","%2D")
+                                            url = url.replace("á","%C3%A1")
+                                            url = url.replace("é","%C3%A9")
+                                            url = url.replace("í","%C3%AD")
+                                            url = url.replace("ó","%C3%B3")
+                                            url = url.replace("ú","%C3%BA")
+                                            url = url.replace("°","%C2%B0")
                                             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                                     Response.Listener { response ->
                                                         if (response.getString("success") == "1") {
@@ -138,6 +167,7 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                                     }
                                     val email= getIntent().getStringExtra("email")
                                     intentListadoClases.putExtra("email", email);
+                                    intentListadoClases.putExtra("fecha", stringFecha);
                                     alertDialog.dismiss()
                                     startActivity(intentListadoClases)
                                 }
@@ -171,11 +201,19 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                 estado.setOnCheckedChangeListener{buttonView, isChecked ->
                     if (isChecked){
                         if(iGestionarClaseControlador.changeStatus(this, "activo", idClase.toString()) == 1) {
-                            var estado = "activo"
+                            val estado = "activo"
                             alertDialog.show()
 
                             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
-                            url = url.replace(" ", "%20")
+                            url = url.replace(" ","%20")
+                            url = url.replace("#","%23")
+                            url = url.replace("-","%2D")
+                            url = url.replace("á","%C3%A1")
+                            url = url.replace("é","%C3%A9")
+                            url = url.replace("í","%C3%AD")
+                            url = url.replace("ó","%C3%B3")
+                            url = url.replace("ú","%C3%BA")
+                            url = url.replace("°","%C2%B0")
                             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                     Response.Listener { response ->
                                         if (response.getString("success") == "1") {
@@ -194,11 +232,19 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                         }
                     } else {
                         if(iGestionarClaseControlador.changeStatus(this, "inactivo", idClase.toString()) == 1) {
-                            var estado = "inactivo"
+                            val estado = "inactivo"
                             alertDialog.show()
 
                             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/editar_estado.php?idClase=$idClase&estado=$estado"
-                            url = url.replace(" ", "%20")
+                            url = url.replace(" ","%20")
+                            url = url.replace("#","%23")
+                            url = url.replace("-","%2D")
+                            url = url.replace("á","%C3%A1")
+                            url = url.replace("é","%C3%A9")
+                            url = url.replace("í","%C3%AD")
+                            url = url.replace("ó","%C3%B3")
+                            url = url.replace("ú","%C3%BA")
+                            url = url.replace("°","%C2%B0")
                             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                     Response.Listener { response ->
                                         if (response.getString("success") == "1") {
@@ -232,7 +278,7 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             val intentEditarClase = Intent(this, EditarClaseActivity::class.java)
             val idBusqueda = clase.id.toString()
             intentEditarClase.putExtra("id_clase", idBusqueda)
-            val email= getIntent().getStringExtra("email")
+            val email= intent.getStringExtra("email")
             intentEditarClase.putExtra("email", email)
             intentEditarClase.putExtra("fecha", stringFecha)
             alertDialog.show()
@@ -240,6 +286,14 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             if (isNetworkConnected(this)) {
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
                 url = url.replace(" ","%20")
+                url = url.replace("#","%23")
+                url = url.replace("-","%2D")
+                url = url.replace("á","%C3%A1")
+                url = url.replace("é","%C3%A9")
+                url = url.replace("í","%C3%AD")
+                url = url.replace("ó","%C3%B3")
+                url = url.replace("ú","%C3%BA")
+                url = url.replace("°","%C2%B0")
                 val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                         Response.Listener { response ->
                             try {
@@ -297,6 +351,53 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         startActivity(intentListadoClases)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -305,7 +406,7 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            var email= getIntent().getStringExtra("email")
+            var email= intent.getStringExtra("email")
             intentEditarPerfil.putExtra("email", email);
             startActivity(intentEditarPerfil)
         }
@@ -317,7 +418,7 @@ class PopupDetalleClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             builder.setMessage("¿Seguro que deseas salir de Teach?")
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
-                        val email= getIntent().getStringExtra("email")
+                        val email= intent.getStringExtra("email")
                         intentLogout.putExtra("email", email);
                         startActivity(intentLogout)
                     }

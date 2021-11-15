@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -34,7 +35,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NAME_SHADOWING")
 class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
     var calendar = Calendar.getInstance()
@@ -56,16 +57,16 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
 
         request = Volley.newRequestQueue(this)
 
-        val fechaClase= getIntent().getStringExtra("fecha")
-        val horaClase= getIntent().getStringExtra("hora")
-        val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
+        val fechaClase= intent.getStringExtra("fecha")
+        val horaClase= intent.getStringExtra("hora")
+        val estudiantes: ArrayList<Estudiante> = ArrayList()
         var id_estudiante = ""
         var fecha = findViewById<TextInputEditText>(R.id.txt_fecha_solicitar_clase)
         var fecha_fin = findViewById<TextInputEditText>(R.id.txt_fecha_fin_solicitar_clase)
         var horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_solicitar_clase)
-        var checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_solicitar_clase)
-        var fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_solicitar_clase)
-        var precioClase = findViewById<TextInputEditText>(R.id.txt_precio_solicitar_clase)
+        val checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_solicitar_clase)
+        val fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_solicitar_clase)
+        val precioClase = findViewById<TextInputEditText>(R.id.txt_precio_solicitar_clase)
         fecha?.setText(fechaClase)
         horaMinutos?.setText(horaClase)
 
@@ -272,7 +273,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                 "Áreas y volúmenes"
         )
 
-        val probabilidadyEstadística = arrayOf(
+        val probabilidadyEstadistica = arrayOf(
                 "Teoria de conjuntos",
                 "Operaciones de conjuntos",
                 "Técnicas de conteo",
@@ -331,7 +332,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         val adapterMath10 = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, matematicas10)
         val adapterMath11 = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, matematicas11)
         val adapterGeometry = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, geometria)
-        val adapterStadistic = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, probabilidadyEstadística)
+        val adapterStadistic = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, probabilidadyEstadistica)
         val adapterCalculus = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, precalculo)
         val adapterPhysical = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, fisica)
         val adapterToolsOffice = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, herramientasOfimaticas)
@@ -339,7 +340,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         autotextView.setAdapter(adapter)
 
         request = Volley.newRequestQueue(this)
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
         builder.setView(dialogView)
         builder.setCancelable(false)
@@ -357,7 +358,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                         var jsonObjet: JSONObject
                         val jsonArray = response.optJSONArray("listaAlumnos")
                         for (i in 0 until jsonArray.length()) {
-                            var estudiante = Estudiante()
+                            val estudiante = Estudiante()
                             jsonObjet = jsonArray.getJSONObject(i)
                             estudiante.id = jsonObjet.getInt("id_estudiante")
                             estudiante.nombre = jsonObjet.getString("nombre")
@@ -465,8 +466,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         btnGuardar.setOnClickListener{
 
 
-            var profesor = Profesor()
-            var clase = Clase()
+            val profesor: Profesor
             val stringEmail= getIntent().getStringExtra("email")
             val inquietudes: EditText? = findViewById(R.id.txt_inquietudes__solicitar_clase)
 
@@ -475,8 +475,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             val stringInquietudes = inquietudes?.text.toString().trim()
             val stringFecha = fecha?.text.toString().trim()
             val stringHoraMinutos = horaMinutos?.text.toString().trim()
-            var stringDuracion = duracion?.text.toString().trim()
-            var stringPrecio = precioClase?.text.toString().trim()
+            val stringDuracion = duracion?.text.toString().trim()
+            val stringPrecio = precioClase?.text.toString().trim()
 
             val intentInsert = Intent(this, GestionarClaseActivity::class.java)
             profesor = iSolicitarClaseControlador.getTeacher(this,stringEmail.toString())
@@ -486,6 +486,14 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                 if(profesor.id == 0){
                     var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_profesor.php?email=$stringEmail"
                     url = url.replace(" ","%20")
+                    url = url.replace("#","%23")
+                    url = url.replace("-","%2D")
+                    url = url.replace("á","%C3%A1")
+                    url = url.replace("é","%C3%A9")
+                    url = url.replace("í","%C3%AD")
+                    url = url.replace("ó","%C3%B3")
+                    url = url.replace("ú","%C3%BA")
+                    url = url.replace("°","%C2%B0")
                     val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                             Response.Listener { response ->
                                 try {
@@ -507,7 +515,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                                 profesor.id
                                         )
 
-                                        var idProfesor = profesor.id
+                                        val idProfesor = profesor.id
                                         var idEstudiante = id_estudiante
                                         var estadoClase = "activo"
                                         alertDialog.show()
@@ -592,9 +600,9 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                                 profesor.id
                         )
 
-                        var idProfesor = profesor.id
-                        var idEstudiante = id_estudiante
-                        var estadoClase = "activo"
+                        val idProfesor = profesor.id
+                        val idEstudiante = id_estudiante
+                        val estadoClase = "activo"
                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/guardar_clase.php?materia=$stringMateria&tema=$stringTema" +
                                 "&inquietudes=$stringInquietudes&estado=$estadoClase&fecha=$stringFecha&hora=$stringHoraMinutos&duracion=$stringDuracion&precio=$stringPrecio&idEstudiante=$idEstudiante&idProfesor=$idProfesor"
                         url = url.replace(" ", "%20")
@@ -694,7 +702,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                 } else {
                     am_pm = " PM"
                 }
-                val horaReloj = "" + hora + ":" + minutos
+                val horaReloj = "$hora:$minutos"
                 val date: Date  = formatohora.parse(horaReloj)
                 horaMinutos?.setText(formatohora.format(date).toString() + am_pm)
             }, hora, minutos, false)
@@ -711,8 +719,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
                         val intentClass = Intent(this, GestionarClaseActivity::class.java)
-                        val email= getIntent().getStringExtra("email")
-                        val fecha= getIntent().getStringExtra("fecha")
+                        val email= intent.getStringExtra("email")
+                        val fecha= intent.getStringExtra("fecha")
                         intentClass.putExtra("email", email)
                         intentClass.putExtra("fecha", fecha)
                         startActivity(intentClass)
@@ -727,8 +735,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             if (duracion?.text.toString().isEmpty()){
                 duracion?.setText("1")
             } else {
-                var intDuracion = duracion?.text.toString().trim().toInt()
-                var nuevaDuracion = intDuracion - 1
+                val intDuracion = duracion?.text.toString().trim().toInt()
+                val nuevaDuracion = intDuracion - 1
                 if (nuevaDuracion >= 1) {
                     duracion?.setText(nuevaDuracion.toString())
                 } else {
@@ -743,8 +751,8 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             if (duracion?.text.toString().isEmpty()) {
                 duracion?.setText("1")
             } else {
-                var intDuracion = duracion?.text.toString().trim().toInt()
-                var nuevaDuracion = intDuracion + 1
+                val intDuracion = duracion?.text.toString().trim().toInt()
+                val nuevaDuracion = intDuracion + 1
                 if (nuevaDuracion <= 6) {
                     duracion?.setText(nuevaDuracion.toString())
                 } else {
@@ -777,6 +785,53 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         alert.show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -785,7 +840,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            var email= getIntent().getStringExtra("email")
+            val email= intent.getStringExtra("email")
             intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
@@ -797,7 +852,7 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
             builder.setMessage("¿Seguro que deseas salir de Teach?")
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
-                        val email= getIntent().getStringExtra("email")
+                        val email= intent.getStringExtra("email")
                         intentLogout.putExtra("email", email);
                         startActivity(intentLogout)
                     }

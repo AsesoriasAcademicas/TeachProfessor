@@ -1,6 +1,5 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
-import android.R.attr.data
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -34,7 +33,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NAME_SHADOWING")
 class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
     val iRegistraseControlador = RegistrarseControlador(this)
@@ -54,15 +53,17 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
         request = Volley.newRequestQueue(this)
 
+        val nombre = findViewById<TextInputEditText>(R.id.txt_nombre_registro)
+        nombre.requestFocus()
+        val email = findViewById<TextInputEditText>(R.id.txt_email_registro)
+        val password = findViewById<TextInputEditText>(R.id.txt_password_registro)
+        val repetPassword = findViewById<TextInputEditText>(R.id.txt_repet_pass_registro)
+        val checkTerminosCondiciones: CheckBox? = findViewById(R.id.checkbox_meat)
+
         val btnInsertarPersona = findViewById<Button>(R.id.btn_registrarse_registro)
         btnInsertarPersona.setOnClickListener {
 
-            var profesor = Profesor()
-            val nombre = findViewById<TextInputEditText>(R.id.txt_nombre_registro)
-            val email = findViewById<TextInputEditText>(R.id.txt_email_registro)
-            val password = findViewById<TextInputEditText>(R.id.txt_password_registro)
-            val repetPassword = findViewById<TextInputEditText>(R.id.txt_repet_pass_registro)
-            val checkTerminosCondiciones: CheckBox? = findViewById(R.id.checkbox_meat)
+            val profesor = Profesor()
             stringNombre = nombre?.text.toString().trim()
             stringEmail = email?.text.toString().trim()
             stringPass = password?.text.toString().trim()
@@ -75,7 +76,7 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
             if(iRegistraseControlador.onRegistry(this, stringNombre, stringEmail, stringPass, stringRepetPass, booleanCheck) == -1) {
                 val persona = Persona(stringNombre, stringEmail, passEncript)
-                var builder = AlertDialog.Builder(this)
+                val builder = AlertDialog.Builder(this)
                 val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
                 builder.setView(dialogView)
                 builder.setCancelable(false)
@@ -208,9 +209,32 @@ class RegistrarseActivity : AppCompatActivity(), IRegistrarseVista {
 
         val btnCancelarRegistro = findViewById<Button>(R.id.btn_cancelar_registro)
         btnCancelarRegistro.setOnClickListener{
-            val intentLogin = Intent(this, LoginActivity::class.java)
-            startActivity(intentLogin)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cancelar registro")
+            builder.setMessage("¿Seguro que deseas cancelar el registro en Teach?")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirmar") { dialog, id ->
+                        val intentLogin = Intent(this, LoginActivity::class.java)
+                        startActivity(intentLogin)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+            val alert = builder.create()
+            alert.show()
         }
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cancelar registro")
+        builder.setMessage("¿Seguro que deseas cancelar el registro en Teach?")
+                .setCancelable(false)
+                .setPositiveButton("Confirmar") { dialog, id ->
+                    val intentLogin = Intent(this, LoginActivity::class.java)
+                    startActivity(intentLogin)
+                }
+                .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
     }
 
     override fun onLoginSuccess(mensaje: String) {

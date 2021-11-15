@@ -12,16 +12,16 @@
         android:roundIcon="@mipmap/icon_launcher_sosakademico_cake_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AsesoriasAcademicas">
-        <activity android:name=".EditarPerfilActivity"></activity>
-        <activity android:name=".FechaClaseActivity"/>
-        <activity android:name=".HoraClaseAcivity"/>
-        <activity android:name=".EditarClaseActivity" />
-        <activity android:name=".GananciasActivity" />
-        <activity android:name=".PopupDetalleClaseActivity" />
-        <activity android:name=".GestionarClaseActivity"/>
-        <activity android:name=".SolicitarClaseActivity" />
-        <activity android:name=".RegistrarseActivity" />
-        <activity android:name=".LoginActivity" android:theme="@style/SplashTheme">
+        <activity android:name=".EditarPerfilActivity" android:windowSoftInputMode="stateHidden"></activity>
+        <activity android:name=".FechaClaseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".HoraClaseAcivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".EditarClaseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".GananciasActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".PopupDetalleClaseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".GestionarClaseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".SolicitarClaseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".RegistrarseActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".LoginActivity" android:theme="@style/SplashTheme" android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,10 +29,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".DialogActivity"/>
-        <activity android:name=".InicioActivity"/>
-        <activity android:name=".GestionarAlumnosClase"/>
-        <activity android:name=".IngresarAlumnoActivity"/>
-        <activity android:name=".EditarAlumnoActivity"/>
+        <activity android:name=".InicioActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".GestionarAlumnosClase" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".IngresarAlumnoActivity" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".EditarAlumnoActivity" android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

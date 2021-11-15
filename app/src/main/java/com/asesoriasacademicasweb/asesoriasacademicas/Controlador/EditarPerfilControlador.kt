@@ -25,7 +25,7 @@ class EditarPerfilControlador(val iEditarPerfilVista: IEditarPerfilVista) : IEdi
             7 -> this.iEditarPerfilVista.onLoginError("La contraseña no coincide, verifica e intenta nuevamente")
             8 -> this.iEditarPerfilVista.onLoginError("El campo nombre no es válido")
             9 -> this.iEditarPerfilVista.onLoginError("El campo telefono no es válido")
-            -1 -> this.iEditarPerfilVista.onLoginSuccess("La edición de la clase se realizó satisfactoriamente")
+            -1 -> this.iEditarPerfilVista.onLoginSuccess("La edición del perfil se realizó satisfactoriamente")
         }
         return persona.editarPerfil(context, repetContrasenia)
     }

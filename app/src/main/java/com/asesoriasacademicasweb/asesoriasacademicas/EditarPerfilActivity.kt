@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,9 +24,7 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Controlador.EditarPerfilCo
 import com.asesoriasacademicasweb.asesoriasacademicas.Model.Persona
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IEditarPerfilVista
 import com.google.android.material.textfield.TextInputEditText
-import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 import java.security.spec.KeySpec
 import java.util.*
 import javax.crypto.Cipher
@@ -35,7 +34,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "NAME_SHADOWING")
 class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
     val iEditarPerfilControlador = EditarPerfilControlador(this)
@@ -59,12 +58,12 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
         val password = findViewById<TextInputEditText>(R.id.txt_password_editar_perfil)
         val repetPassword = findViewById<TextInputEditText>(R.id.txt_repet_password_editar_perfil)
 
-        var persona = Persona()
-        val emailBuscado= getIntent().getStringExtra("email")
+        val persona: Persona
+        val emailBuscado= intent.getStringExtra("email")
 
         persona = iEditarPerfilControlador.getUser(this, "" + emailBuscado)
 
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
         builder.setView(dialogView)
         builder.setCancelable(false)
@@ -76,6 +75,14 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
         if(persona != null){
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$emailBuscado"
             url = url.replace(" ","%20")
+            url = url.replace("#","%23")
+            url = url.replace("-","%2D")
+            url = url.replace("á","%C3%A1")
+            url = url.replace("é","%C3%A9")
+            url = url.replace("í","%C3%AD")
+            url = url.replace("ó","%C3%B3")
+            url = url.replace("ú","%C3%BA")
+            url = url.replace("°","%C2%B0")
             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                     Response.Listener { response ->
                         try {
@@ -107,13 +114,13 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                                             }
                                         },
                                         Response.ErrorListener { error ->
-                                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
                                             alertDialog.dismiss()
                                         })
                                 request?.add(jsonObjectRequest)
 
                             } else if (response.getString("success") == "0") {
-                                Toast.makeText(this, "\n" + "Ocurrio un error al cargar el perfil!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "\n" + "Ocurrio un error al cargar el perfil!", Toast.LENGTH_SHORT).show()
                                 alertDialog.dismiss()
                             }
                         } catch (e: JSONException) {
@@ -121,7 +128,7 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                         }
                     },
                     Response.ErrorListener { error ->
-                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     })
             request?.add(jsonObjectRequest)
@@ -148,7 +155,7 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                     .setPositiveButton("Confirmar") { dialog, id ->
                         val intentMain = Intent(this, InicioActivity::class.java)
                         val email= getIntent().getStringExtra("email")
-                        intentMain.putExtra("email", emailBuscado);
+                        intentMain.putExtra("email", email)
                         startActivity(intentMain)
                     }
                     .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
@@ -193,7 +200,7 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                     val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                             Response.Listener { response ->
                                 if (response.getString("success") == "1"){
-                                    intentEditProfile.putExtra("email", stringEmail!!)
+                                    intentEditProfile.putExtra("email", stringEmail)
                                     alertDialog.dismiss()
                                     startActivity(intentEditProfile)
                                 } else if(response.getString("error") == "0") {
@@ -202,7 +209,7 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                                 }
                             },
                             Response.ErrorListener { error ->
-                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su perfil!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "\n" + "Ocurrió un error en la actualización de su perfil!", Toast.LENGTH_SHORT).show()
                                 alertDialog.dismiss()
                             })
                     request?.add(jsonObjectRequest)
@@ -212,9 +219,9 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
 
         val btnGnancias = findViewById<ImageView>(R.id.img_moneda_editar_perfil)
         btnGnancias.setOnClickListener{
-            val email= getIntent().getStringExtra("email")
+            val email= intent.getStringExtra("email")
             val intentGanancias = Intent(this, GananciasActivity::class.java)
-            intentGanancias.putExtra("email", email);
+            intentGanancias.putExtra("email", email)
             startActivity(intentGanancias)
         }
     }
@@ -226,13 +233,60 @@ class EditarPerfilActivity : AppCompatActivity(), IEditarPerfilVista {
                 .setCancelable(false)
                 .setPositiveButton("Confirmar") { dialog, id ->
                     val intentLogout = Intent(this, InicioActivity::class.java)
-                    val email= getIntent().getStringExtra("email")
-                    intentLogout.putExtra("email", email);
+                    val email= intent.getStringExtra("email")
+                    intentLogout.putExtra("email", email)
                     startActivity(intentLogout)
                 }
                 .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
     }
 
     override fun onLoginSuccess(mensaje: String) {

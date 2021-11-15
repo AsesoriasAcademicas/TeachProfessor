@@ -44,7 +44,9 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:focusable="true"
-                android:cursorVisible="false"/>
+                android:cursorVisible="false"
+                android:textIsSelectable="true"
+                android:inputType="none" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,7 +61,9 @@
                 android:id="@+id/spn_tema_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:cursorVisible="false"/>
+                android:cursorVisible="false"
+                android:textIsSelectable="true"
+                android:inputType="none"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -287,7 +291,9 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:focusable="true"
-                android:cursorVisible="false"/>
+                android:cursorVisible="false"
+                android:textIsSelectable="true"
+                android:inputType="none"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

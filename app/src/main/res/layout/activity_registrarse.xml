@@ -36,14 +36,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/txt_nombre_registration"
-            android:autofillHints="@string/txt_nombre_registration">
+            android:autofillHints="@string/txt_nombre_registration"
+            android:focusableInTouchMode="true"
+            android:focusable="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_nombre_registro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName"
+                android:focusableInTouchMode="true"
+                android:focusable="true"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

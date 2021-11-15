@@ -31,7 +31,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "NAME_SHADOWING")
 class LoginActivity : AppCompatActivity(), ILoginVista{
 
     val iLoginControlador = LoginControlador(this)
@@ -78,12 +78,20 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
 
                     if (isNetworkConnected(this)) {
                         var url = "https://webserviceasesoriasacademicas.000webhostapp.com/obtener_persona.php?email=$stringEmail"
-                        url = url.replace(" ", "%20")
+                        url = url.replace(" ","%20")
+                        url = url.replace("#","%23")
+                        url = url.replace("-","%2D")
+                        url = url.replace("á","%C3%A1")
+                        url = url.replace("é","%C3%A9")
+                        url = url.replace("í","%C3%AD")
+                        url = url.replace("ó","%C3%B3")
+                        url = url.replace("ú","%C3%BA")
+                        url = url.replace("°","%C2%B0")
                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                 Response.Listener { response ->
                                     try {
                                         if (response.getString("success") == "1") {
-                                            if (iLoginControlador.onLogin(
+                                            /*if (iLoginControlador.onLogin(
                                                             this,
                                                             stringEmail,
                                                             passEncript
@@ -92,10 +100,17 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
                                                 intentLogin.putExtra("email", stringEmail)
                                                 alertDialog.dismiss()
                                                 startActivity(intentLogin)
-                                            } else {
-                                                var url =
-                                                        "https://webserviceasesoriasacademicas.000webhostapp.com/login.php?email=$stringEmail&password=$passEncript"
-                                                url = url.replace(" ", "%20")
+                                            } else {*/
+                                                var url = "https://webserviceasesoriasacademicas.000webhostapp.com/login.php?email=$stringEmail&password=$passEncript"
+                                                url = url.replace(" ","%20")
+                                                url = url.replace("#","%23")
+                                                url = url.replace("-","%2D")
+                                                url = url.replace("á","%C3%A1")
+                                                url = url.replace("é","%C3%A9")
+                                                url = url.replace("í","%C3%AD")
+                                                url = url.replace("ó","%C3%B3")
+                                                url = url.replace("ú","%C3%BA")
+                                                url = url.replace("°","%C2%B0")
                                                 val jsonObjectRequest =
                                                         JsonObjectRequest(Request.Method.GET, url, null,
                                                                 Response.Listener { response ->
@@ -124,7 +139,7 @@ class LoginActivity : AppCompatActivity(), ILoginVista{
                                                                     alertDialog.dismiss()
                                                                 })
                                                 request?.add(jsonObjectRequest)
-                                            }
+                                            /*}*/
                                         } else if (response.getString("success") == "0") {
                                             Toast.makeText(
                                                     this,

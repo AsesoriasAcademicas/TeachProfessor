@@ -1,15 +1,19 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.asesoriasacademicasweb.asesoriasacademicas.Controlador.HolaClaseControlador
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IHoraClaseVista
@@ -20,6 +24,7 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
 
     val iHoraClaseControlador = HolaClaseControlador(this)
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hora_clase)
@@ -34,7 +39,7 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
             var am_pm = ""
                 if(hour > 12) {
                     am_pm = "PM"
-                    hour = hour - 12;
+                    hour = hour - 12
                 }
                 else
                 {
@@ -43,46 +48,60 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
 
             val hourMin = hour.toString() + ":" + minute + " " + am_pm
             val intentClass = Intent(this, SolicitarClaseActivity::class.java)
-            val fecha= getIntent().getStringExtra("fecha")
-            val email= getIntent().getStringExtra("email")
-            intentClass.putExtra("email", email);
-            intentClass.putExtra("fecha", fecha);
-            intentClass.putExtra("hora", hourMin);
+            val fecha= intent.getStringExtra("fecha")
+            val email= intent.getStringExtra("email")
+            intentClass.putExtra("email", email)
+            intentClass.putExtra("fecha", fecha)
+            intentClass.putExtra("hora", hourMin)
             startActivity(intentClass)
         }
+    }
 
-        /*val listView: ListView? = findViewById(R.id.listHour_class)
-        val hoursDay = ArrayList<String>()
-        hoursDay.add("06:00 A.M")
-        hoursDay.add("07:00 A.M")
-        hoursDay.add("08:00 A.M")
-        hoursDay.add("09:00 A.M")
-        hoursDay.add("10:00 A.M")
-        hoursDay.add("11:00 A.M")
-        hoursDay.add("12:00 M")
-        hoursDay.add("01:00 P.M")
-        hoursDay.add("02:00 P.M")
-        hoursDay.add("03:00 P.M")
-        hoursDay.add("04:00 P.M")
-        hoursDay.add("05:00 P.M")
-        hoursDay.add("06:00 P.M")
-        hoursDay.add("07:00 P.M")
-        hoursDay.add("08:00 P.M")
-        hoursDay.add("09:00 P.M")
-        hoursDay.add("10:00 P.M")
-        val adaptador: ArrayAdapter<String> = ArrayAdapter(this, R.layout.activity_listview, R.id.label, hoursDay)
-        listView?.setAdapter(adaptador)
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
 
-        listView?.setOnItemClickListener(OnItemClickListener { parent, view, position, id ->
-            val hour = hoursDay[position]
-            val intentClass = Intent(this, SolicitarClaseActivity::class.java)
-            val fecha= getIntent().getStringExtra("fecha")
-            val email= getIntent().getStringExtra("email")
-            intentClass.putExtra("email", email);
-            intentClass.putExtra("fecha", fecha);
-            intentClass.putExtra("hora", hour.toString());
-            startActivity(intentClass)
-        })*/
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -93,7 +112,7 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            var email= getIntent().getStringExtra("email")
+            val email= getIntent().getStringExtra("email")
             intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
@@ -106,7 +125,7 @@ class HoraClaseAcivity: AppCompatActivity(), IHoraClaseVista {
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
                         val email= getIntent().getStringExtra("email")
-                        intentLogout.putExtra("email", email);
+                        intentLogout.putExtra("email", email)
                         startActivity(intentLogout)
                     }
                     .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }

@@ -4,12 +4,15 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -17,12 +20,12 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.asesoriasacademicasweb.asesoriasacademicas.Controlador.IngresarAlumnoControlador
-import com.asesoriasacademicasweb.asesoriasacademicas.Model.Persona
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IIngresarAlumnoVista
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
+import java.util.*
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "NAME_SHADOWING")
 class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
 
     val iIngresarAlumnoControlador = IngresarAlumnoControlador(this)
@@ -34,23 +37,22 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
 
         request = Volley.newRequestQueue(this)
 
-        val emailBuscado = getIntent().getStringExtra("email")
+        val emailBuscado = intent.getStringExtra("email")
+        val nombre = findViewById<TextInputEditText>(R.id.txt_nombre_ingresar_alumno)
+        nombre.requestFocus()
+        val telefono = findViewById<TextInputEditText>(R.id.txt_telefono_ingresar_alumno)
+        val direccion = findViewById<TextInputEditText>(R.id.txt_direccion_ingresar_alumno)
+        val email = findViewById<TextInputEditText>(R.id.txt_email_ingresar_alumno)
         val btnInsertarEstudiante = findViewById<Button>(R.id.btn_guardar_ingresar_alumno)
         btnInsertarEstudiante.setOnClickListener {
 
-            val nombre = findViewById<TextInputEditText>(R.id.txt_nombre_ingresar_alumno)
-            nombre.requestFocus()
-            val telefono = findViewById<TextInputEditText>(R.id.txt_telefono_ingresar_alumno)
-            val direccion = findViewById<TextInputEditText>(R.id.txt_direccion_ingresar_alumno)
-            val email = findViewById<TextInputEditText>(R.id.txt_email_ingresar_alumno)
             val stringNombre = nombre?.text.toString().trim()
             val stringEmail = email?.text.toString().trim()
             val stringTelefono = telefono?.text.toString().trim()
             val stringDireccion = direccion?.text.toString().trim()
 
-            var persona = Persona()
             val intentRegistry = Intent(this, GestionarAlumnosClase::class.java)
-            var builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this)
             val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
             builder.setView(dialogView)
             builder.setCancelable(false)
@@ -99,7 +101,7 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
                                                     }
                                                 },
                                                 Response.ErrorListener { error ->
-                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
                                                     alertDialog.dismiss()
                                                 })
                                         request?.add(jsonObjectRequest)
@@ -154,6 +156,53 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
         alert.show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_popup, menu)
         return true
@@ -162,7 +211,7 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            var email= getIntent().getStringExtra("email")
+            val email= getIntent().getStringExtra("email")
             intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
@@ -174,8 +223,8 @@ class IngresarAlumnoActivity: AppCompatActivity(), IIngresarAlumnoVista {
             builder.setMessage("¿Seguro que deseas salir de Teach?")
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
-                        val email= getIntent().getStringExtra("email")
-                        intentLogout.putExtra("email", email);
+                        val email= intent.getStringExtra("email")
+                        intentLogout.putExtra("email", email)
                         startActivity(intentLogout)
                     }
                     .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }

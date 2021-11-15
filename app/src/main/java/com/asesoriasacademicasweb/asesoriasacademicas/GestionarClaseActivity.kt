@@ -4,14 +4,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuBuilder
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -23,14 +25,11 @@ import com.asesoriasacademicasweb.asesoriasacademicas.Model.Profesor
 import com.asesoriasacademicasweb.asesoriasacademicas.Vista.IGestionarClaseVista
 import org.json.JSONException
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NAME_SHADOWING")
 class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
 
     val iGestionarClaseControlador = GestionarClaseControlador(this)
@@ -43,13 +42,13 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
 
         request = Volley.newRequestQueue(this)
 
-        var profesor = Profesor()
-        val stringEmail= getIntent().getStringExtra("email")
-        val stringFecha= getIntent().getStringExtra("fecha")
+        val profesor = Profesor()
+        val stringEmail= intent.getStringExtra("email")
+        val stringFecha= intent.getStringExtra("fecha")
         val tituloFecha: TextView? = findViewById<TextView>(R.id.txt_fecha_gestionar_clase)
 
         tituloFecha?.setText(stringFecha)
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
         builder.setView(dialogView)
         builder.setCancelable(false)
@@ -82,13 +81,13 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                             if (adaptador.count != 0) {
                                 listView?.setAdapter(adaptador)
                                 alertDialog?.dismiss()
-                                listView?.setOnItemClickListener(OnItemClickListener { parent, view, position, id ->
+                                listView?.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                                     val intentPopupDetalleClass = Intent(this, PopupDetalleClaseActivity::class.java)
-                                    intentPopupDetalleClass.putExtra("id_clase", clases[position].id.toString());
-                                    val email = getIntent().getStringExtra("email")
-                                    intentPopupDetalleClass.putExtra("email", email);
+                                    intentPopupDetalleClass.putExtra("id_clase", clases[position].id.toString())
+                                    val email = intent.getStringExtra("email")
+                                    intentPopupDetalleClass.putExtra("email", email)
                                     startActivity(intentPopupDetalleClass)
-                                })
+                                }
                             } else {
                                 val mensajeClasesVacio: ArrayList<String> = ArrayList()
                                 mensajeClasesVacio.add("No tiene clases")
@@ -98,7 +97,15 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                             }
                         } else {
                             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_clases_profesor.php?email=$stringEmail"
-                            url = url.replace(" ", "%20")
+                            url = url.replace(" ","%20")
+                            url = url.replace("#","%23")
+                            url = url.replace("-","%2D")
+                            url = url.replace("á","%C3%A1")
+                            url = url.replace("é","%C3%A9")
+                            url = url.replace("í","%C3%AD")
+                            url = url.replace("ó","%C3%B3")
+                            url = url.replace("ú","%C3%BA")
+                            url = url.replace("°","%C2%B0")
                             val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                                 Response.Listener { response ->
                                     try {
@@ -106,7 +113,7 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                                         var jsonObjet: JSONObject
                                         val jsonArray = response.optJSONArray("listaClases")
                                         for (i in 0 until jsonArray.length()) {
-                                            var clase = Clase()
+                                            val clase = Clase()
                                             jsonObjet = jsonArray.getJSONObject(i)
                                             clase.id = jsonObjet.getInt("id_clase")
                                             clase.fecha = jsonObjet.getString("fecha")
@@ -125,19 +132,19 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                                             ArrayAdapter(this, R.layout.activity_listview, R.id.label, clases)
 
                                         if (adaptador.count != 0) {
-                                            listView?.setAdapter(adaptador)
+                                            listView?.adapter = adaptador
                                             alertDialog.dismiss()
-                                            listView?.setOnItemClickListener(OnItemClickListener { parent, view, position, id ->
+                                            listView?.onItemClickListener = OnItemClickListener { parent, view, position, id ->
                                                 val intentPopupDetalleClass = Intent(this, PopupDetalleClaseActivity::class.java)
                                                 intentPopupDetalleClass.putExtra(
-                                                    "id_clase",
-                                                    clases[position].id.toString()
-                                                );
-                                                val email = getIntent().getStringExtra("email")
-                                                intentPopupDetalleClass.putExtra("email", email);
-                                                intentPopupDetalleClass.putExtra("fecha", stringFecha);
+                                                        "id_clase",
+                                                        clases[position].id.toString()
+                                                )
+                                                val email = intent.getStringExtra("email")
+                                                intentPopupDetalleClass.putExtra("email", email)
+                                                intentPopupDetalleClass.putExtra("fecha", stringFecha)
                                                 startActivity(intentPopupDetalleClass)
-                                            })
+                                            }
                                         } else {
                                             val mensajeClasesVacio: ArrayList<String> = ArrayList()
                                             mensajeClasesVacio.add("No tiene clases")
@@ -179,7 +186,7 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
                     }
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "\n" + "Por favor verifica tu conexión a internet y vuelve a intentarlo!", Toast.LENGTH_SHORT).show()
                     alertDialog.dismiss()
                 })
             request?.add(jsonObjectRequest)
@@ -192,8 +199,8 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         val btnAgregarClase = findViewById<Button>(R.id.btn_agregar_gestionar_clase)
         btnAgregarClase.setOnClickListener{
             val intentClass = Intent(this, HoraClaseAcivity::class.java)
-            val email= getIntent().getStringExtra("email")
-            val fecha= getIntent().getStringExtra("fecha")
+            val email= intent.getStringExtra("email")
+            val fecha= intent.getStringExtra("fecha")
             intentClass.putExtra("email", email)
             intentClass.putExtra("fecha", fecha);
             startActivity(intentClass)
@@ -203,9 +210,56 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
         btnCancelarGestionarClase.setOnClickListener {
             val intentInicio = Intent(this, InicioActivity::class.java)
             val email= getIntent().getStringExtra("email")
-            intentInicio.putExtra("email", email);
+            intentInicio.putExtra("email", email)
             intentInicio.putExtra("fecha",stringFecha)
             startActivity(intentInicio)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
         }
     }
 
@@ -217,7 +271,7 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            val email= getIntent().getStringExtra("email")
+            val email= intent.getStringExtra("email")
             intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
@@ -229,8 +283,8 @@ class GestionarClaseActivity : AppCompatActivity(), IGestionarClaseVista {
             builder.setMessage("¿Seguro que deseas salir de Teach?")
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
-                        val email= getIntent().getStringExtra("email")
-                        intentLogout.putExtra("email", email);
+                        val email= intent.getStringExtra("email")
+                        intentLogout.putExtra("email", email)
                         startActivity(intentLogout)
                     }
                     .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }

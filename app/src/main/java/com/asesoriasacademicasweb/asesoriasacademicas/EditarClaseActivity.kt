@@ -1,16 +1,20 @@
 package com.asesoriasacademicasweb.asesoriasacademicas
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.android.volley.Request
@@ -28,7 +32,6 @@ import com.google.android.material.radiobutton.MaterialRadioButton
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
 import org.json.JSONObject
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,22 +50,23 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
     val iEditarClaseControlador = EditarClaseControlador(this)
     var request: RequestQueue? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editar_clase)
 
         request = Volley.newRequestQueue(this)
 
-        var idClase= getIntent().getStringExtra("id_clase")
+        val idClase= intent.getStringExtra("id_clase")
         var idestudiante = 0
-        var precio = 0
-        var obj = Modelo()
-        var clase = Clase()
-        var tutoria = Tutoria()
+        var precio: Int
+        val obj = Modelo()
+        var clase: Clase
+        val tutoria = Tutoria()
 
         var fecha_fin = findViewById<TextInputEditText>(R.id.txt_fecha_fin_editar_clase)
-        var checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_editar_clase)
-        var fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_editar_clase)
+        val checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_editar_clase)
+        val fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_editar_clase)
         val radioButtonRecurrente= findViewById<MaterialRadioButton>(R.id.rbtn_recurrente_editar_clase)
         val radioButtonNoRecurrente= findViewById<MaterialRadioButton>(R.id.rbtn_no_recurrente_editar_clase)
         val radioGroup = findViewById<RadioButton>(R.id.radioGroup) as RadioGroup
@@ -83,15 +87,15 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         autotextView.requestFocus()
         val autotextViewTema= findViewById<AutoCompleteTextView>(R.id.spn_tema_edit)
         val autotextViewAlumno= findViewById<AutoCompleteTextView>(R.id.spn_alumno)
-        var inquietudes: EditText? = findViewById<EditText>(R.id.txt_inquietudes_editar_clase)
+        val inquietudes: EditText? = findViewById<EditText>(R.id.txt_inquietudes_editar_clase)
         var fecha = findViewById<TextInputEditText>(R.id.txt_fecha_editar_clase)
-        var tiempo = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
+        val tiempo = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
         val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
         val duracion= findViewById<TextInputEditText>(R.id.txt_duracion_editar_clase)
         val precioClase = findViewById<TextInputEditText>(R.id.txt_precio_editar_clase)
 
         clase = obj.buscarClase(this, idClase.toString())
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         val dialogView: View = View.inflate(this, R.layout.activity_dialog, null)
         builder.setView(dialogView)
         builder.setCancelable(false)
@@ -103,6 +107,14 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             if(clase.id == 0){
                 var url = "https://webserviceasesoriasacademicas.000webhostapp.com/cargar_clase.php?idClase=$idClase"
                 url = url.replace(" ","%20")
+                url = url.replace("#","%23")
+                url = url.replace("-","%2D")
+                url = url.replace("á","%C3%A1")
+                url = url.replace("é","%C3%A9")
+                url = url.replace("í","%C3%AD")
+                url = url.replace("ó","%C3%B3")
+                url = url.replace("ú","%C3%BA")
+                url = url.replace("°","%C2%B0")
                 val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                         Response.Listener { response ->
                             try {
@@ -334,7 +346,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                 "Áreas y volúmenes"
         )
 
-        val probabilidadyEstadística = arrayOf(
+        val probabilidadyEstadistica = arrayOf(
                 "Teoria de conjuntos",
                 "Operaciones de conjuntos",
                 "Técnicas de conteo",
@@ -393,7 +405,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val adapterMath10 = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, matematicas10)
         val adapterMath11 = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, matematicas11)
         val adapterGeometry = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, geometria)
-        val adapterStadistic = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, probabilidadyEstadística)
+        val adapterStadistic = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, probabilidadyEstadistica)
         val adapterCalculus = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, precalculo)
         val adapterPhysical = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, fisica)
         val adapterToolsOffice = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, herramientasOfimaticas)
@@ -404,7 +416,15 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         if (isNetworkConnected(this)) {
 
             var url = "https://webserviceasesoriasacademicas.000webhostapp.com/listar_alumnos.php"
-            url = url.replace(" ", "%20")
+            url = url.replace(" ","%20")
+            url = url.replace("#","%23")
+            url = url.replace("-","%2D")
+            url = url.replace("á","%C3%A1")
+            url = url.replace("é","%C3%A9")
+            url = url.replace("í","%C3%AD")
+            url = url.replace("ó","%C3%B3")
+            url = url.replace("ú","%C3%BA")
+            url = url.replace("°","%C2%B0")
             val jsonObjectRequest = JsonObjectRequest(
                     Request.Method.GET, url, null,
                     Response.Listener { response ->
@@ -412,7 +432,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                             var jsonObjet: JSONObject
                             val jsonArray = response.optJSONArray("listaAlumnos")
                             for (i in 0 until jsonArray.length()) {
-                                var estudiante = Estudiante()
+                                val estudiante = Estudiante()
                                 jsonObjet = jsonArray.getJSONObject(i)
                                 estudiante.id = jsonObjet.getInt("id_estudiante")
                                 estudiante.nombre = jsonObjet.getString("nombre")
@@ -516,24 +536,36 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             autotextViewTema.requestFocus()
         }
 
-        var btnEditarClase = findViewById<Button>(R.id.btn_guardar_editar_clase)
+        val btnEditarClase = findViewById<Button>(R.id.btn_guardar_editar_clase)
         btnEditarClase.setOnClickListener{
 
-            var estudiante = Estudiante()
-            val stringEmail= getIntent().getStringExtra("email")
+            val estudiante = Estudiante()
             val inquietudes: EditText? = findViewById(R.id.txt_inquietudes_editar_clase)
             fecha = findViewById(R.id.txt_fecha_editar_clase)
-            var horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
+            val horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
             val duracion: EditText? = findViewById(R.id.txt_duracion_editar_clase)
 
-            val stringMateria = materiaSeleccionada
-            val stringTema = temaSeleccionado
+            var stringMateria = ""
+            stringMateria = if (materiaSeleccionada != ""){
+                materiaSeleccionada
+            } else{
+                clase.materia
+            }
+
+            var stringTema = ""
+            stringTema = if (temaSeleccionado != ""){
+                temaSeleccionado
+            } else{
+                clase.tema
+            }
             val stringInquietudes = inquietudes?.text.toString().trim()
             val stringFecha = fecha?.text.toString().trim()
             val stringHoraMinutos = horaMinutos?.text.toString().trim()
             val stringDuracion = duracion?.text.toString().trim()
             var stringPrecio = precioClase?.text.toString().trim()
 
+            System.out.println(stringMateria)
+            System.out.println(stringTema)
             if(iEditarClaseControlador.onEditClass(this, stringFecha, stringHoraMinutos, stringDuracion, stringMateria, stringTema, stringInquietudes, clase.estado, estudiante.id) == -1) {
                 tutoria.materia = stringMateria
                 tutoria.tema = stringTema
@@ -546,11 +578,11 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                 if (iEditarClaseControlador.updateClase(this, tutoria, clase) == 1) {
                     val intentDetalleClase = Intent(this, PopupDetalleClaseActivity::class.java)
                     Toast.makeText(this, "Transaccion exitosa", Toast.LENGTH_SHORT).show()
-                    var idBusqueda = clase.id.toString()
+                    val idBusqueda = clase.id.toString()
                     intentDetalleClase.putExtra("id_clase", idBusqueda);
-                    val email = getIntent().getStringExtra("email")
-                    var idClase = clase.id
-                    var estadoClase = clase.estado
+                    val email = intent.getStringExtra("email")
+                    val idClase = clase.id
+                    val estadoClase = clase.estado
                     alertDialog.show()
 
                     if (isNetworkConnected(this)) {
@@ -570,7 +602,9 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET,url,null,
                                 Response.Listener { response ->
                                     if (response.getString("success") == "1"){
+                                        val fecha= intent.getStringExtra("fecha")
                                         intentDetalleClase.putExtra("email", email)
+                                        intentDetalleClase.putExtra("fecha", fecha)
                                         alertDialog.dismiss()
                                         startActivity(intentDetalleClase)
                                     } else if(response.getString("error") == "0") {
@@ -595,13 +629,13 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             }
         }
 
-        var formatofecha: SimpleDateFormat = SimpleDateFormat("dd/mm/yyyy")
+        val formatofecha: SimpleDateFormat = SimpleDateFormat("dd/mm/yyyy")
         val lanzadorFecha: ImageView = findViewById(R.id.img_fecha_editar_clase)
         fecha = findViewById(R.id.txt_fecha_editar_clase)
         lanzadorFecha.setOnClickListener{
             val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, anio, mes, dia ->
-                var fechaCalendario = "" + dia + "/" + (mes + 1) + "/" + anio
-                var date: Date  = formatofecha.parse(fechaCalendario)
+                val fechaCalendario = "" + dia + "/" + (mes + 1) + "/" + anio
+                val date: Date  = formatofecha.parse(fechaCalendario)
                 fecha?.setText(formatofecha.format(date))
             }, anio, mes, dia)
             datePickerDialog.show()
@@ -620,9 +654,9 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             datePickerDialog.show()
         }
 
-        var formatohora: SimpleDateFormat = SimpleDateFormat("h:mm")
+        val formatohora: SimpleDateFormat = SimpleDateFormat("h:mm")
         val lanzadorTiempo: ImageView = findViewById(R.id.img_hora_editar_clase)
-        var horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
+        val horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
         lanzadorTiempo.setOnClickListener{
             val timePickerDialog = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener{ view, hora, minutos ->
                 var am_pm = ""
@@ -631,8 +665,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                 } else {
                     am_pm = " PM"
                 }
-                var horaReloj = "" + hora + ":" + minutos
-                var date: Date  = formatohora.parse(horaReloj)
+                val horaReloj = "" + hora + ":" + minutos
+                val date: Date  = formatohora.parse(horaReloj)
                 horaMinutos?.setText(formatohora.format(date) + am_pm)
             }, hora, minutos, false)
             timePickerDialog.show()
@@ -640,7 +674,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             horaMinutos.requestFocus()
         }
 
-        var btnCancelarEditarClase = findViewById<Button>(R.id.btn_cancelar_editar_clase)
+        val btnCancelarEditarClase = findViewById<Button>(R.id.btn_cancelar_editar_clase)
         btnCancelarEditarClase.setOnClickListener{
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Cancelar edición de la clase")
@@ -648,9 +682,9 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                     .setCancelable(false)
                     .setPositiveButton("Confirmar") { dialog, id ->
                         val intentCancelar = Intent(this, PopupDetalleClaseActivity::class.java)
-                        var idBusqueda = clase.id.toString()
-                        val email= getIntent().getStringExtra("email")
-                        val fecha= getIntent().getStringExtra("fecha")
+                        val idBusqueda = clase.id.toString()
+                        val email= intent.getStringExtra("email")
+                        val fecha= intent.getStringExtra("fecha")
                         intentCancelar.putExtra("email", email)
                         intentCancelar.putExtra("id_clase", idBusqueda)
                         intentCancelar.putExtra("fecha", fecha)
@@ -666,8 +700,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             if (duracion?.text.toString().isEmpty()){
                 duracion?.setText("1")
             } else {
-                var intDuracion = duracion?.text.toString().trim().toInt()
-                var nuevaDuracion = intDuracion - 1
+                val intDuracion = duracion?.text.toString().trim().toInt()
+                val nuevaDuracion = intDuracion - 1
                 if (nuevaDuracion >= 1) {
                     duracion?.setText(nuevaDuracion.toString())
                 } else {
@@ -682,8 +716,8 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
             if (duracion?.text.toString().isEmpty()){
                 duracion?.setText("1")
             } else {
-                var intDuracion = duracion?.text.toString().trim().toInt()
-                var nuevaDuracion = intDuracion + 1
+                val intDuracion = duracion?.text.toString().trim().toInt()
+                val nuevaDuracion = intDuracion + 1
                 if(nuevaDuracion <= 6) {
                     duracion?.setText(nuevaDuracion.toString())
                 } else {
@@ -701,17 +735,64 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
                 .setCancelable(false)
                 .setPositiveButton("Confirmar") { dialog, id ->
                     val intentLogout = Intent(this, PopupDetalleClaseActivity::class.java)
-                    var idClase= getIntent().getStringExtra("id_clase")
-                    val email= getIntent().getStringExtra("email")
-                    val fecha= getIntent().getStringExtra("fecha")
-                    intentLogout.putExtra("id_clase", idClase);
-                    intentLogout.putExtra("email", email);
-                    intentLogout.putExtra("fecha", fecha);
+                    var idClase= intent.getStringExtra("id_clase")
+                    val email= intent.getStringExtra("email")
+                    val fecha= intent.getStringExtra("fecha")
+                    intentLogout.putExtra("id_clase", idClase)
+                    intentLogout.putExtra("email", email)
+                    intentLogout.putExtra("fecha", fecha)
                     startActivity(intentLogout)
                 }
                 .setNegativeButton("Cancelar") { dialog, id -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onResume() {
+        super.onResume()
+        updateConection(this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun updateConection(context: Context){
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    /*val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_in, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+
+                val timer2 = Timer()
+                timer2.schedule(object : TimerTask() {
+                    override fun run() {
+                        alertDialogConection.dismiss()
+                        timer2.cancel()
+                    }
+                }, 5000)*/
+
+                }
+                override fun onLost(network: Network) {
+                    val builderConection = AlertDialog.Builder(context)
+                    val dialogViewConection: View = View.inflate(context, R.layout.activity_conection_out, null)
+                    builderConection.setView(dialogViewConection)
+                    builderConection.setCancelable(false)
+                    val alertDialogConection = builderConection.create()
+                    alertDialogConection.show()
+                    val timer2 = Timer()
+                    timer2.schedule(object : TimerTask() {
+                        override fun run() {
+                            alertDialogConection.dismiss()
+                            timer2.cancel()
+                        }
+                    }, 5000)
+                }
+            })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -722,7 +803,7 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intentEditarPerfil = Intent(this, EditarPerfilActivity::class.java)
         if (item.itemId == R.id.editar_perfil){
-            val email= getIntent().getStringExtra("email")
+            val email= intent.getStringExtra("email")
             intentEditarPerfil.putExtra("email", email)
             startActivity(intentEditarPerfil)
         }
