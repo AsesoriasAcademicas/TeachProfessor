@@ -11,13 +11,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.CalendarView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.asesoriasacademicasweb.asesoriasacademicas.Controlador.FechaClaseControlador
 import com.asesoriasacademicasweb.asesoriasacademicas.Model.IFechaClaseVista
-import android.widget.CalendarView
-import androidx.annotation.RequiresApi
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class FechaClaseActivity: AppCompatActivity(), IFechaClaseVista {
@@ -34,8 +34,9 @@ class FechaClaseActivity: AppCompatActivity(), IFechaClaseVista {
         calendarView = findViewById(R.id.calendarView)
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             calendar.set(year,month,dayOfMonth)
-            val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
-            val formattedDate = dateFormatter.format(calendar.time)
+            val pattern = "dd/MM/YYYY"
+            val simpleDateFormat = SimpleDateFormat(pattern)
+            val formattedDate = simpleDateFormat.format(calendar.time)
             val intentClass = Intent(this, GestionarClaseActivity::class.java)
             val email= intent.getStringExtra("email")
             intentClass.putExtra("email", email)

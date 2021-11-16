@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -89,7 +90,9 @@ class EditarClaseActivity : AppCompatActivity(), IEditarClaseVista {
         val autotextViewAlumno= findViewById<AutoCompleteTextView>(R.id.spn_alumno)
         val inquietudes: EditText? = findViewById<EditText>(R.id.txt_inquietudes_editar_clase)
         var fecha = findViewById<TextInputEditText>(R.id.txt_fecha_editar_clase)
+        fecha.inputType = InputType.TYPE_NULL
         val tiempo = findViewById<TextInputEditText>(R.id.txt_hora_editar_clase)
+        tiempo.inputType = InputType.TYPE_NULL
         val estudiantes: ArrayList<Estudiante> = ArrayList<Estudiante>()
         val duracion= findViewById<TextInputEditText>(R.id.txt_duracion_editar_clase)
         val precioClase = findViewById<TextInputEditText>(R.id.txt_precio_editar_clase)

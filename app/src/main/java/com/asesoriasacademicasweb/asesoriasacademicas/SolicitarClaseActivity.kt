@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -62,8 +63,10 @@ class SolicitarClaseActivity : AppCompatActivity(), ISolicitarClaseVista {
         val estudiantes: ArrayList<Estudiante> = ArrayList()
         var id_estudiante = ""
         var fecha = findViewById<TextInputEditText>(R.id.txt_fecha_solicitar_clase)
+        fecha.inputType = InputType.TYPE_NULL
         var fecha_fin = findViewById<TextInputEditText>(R.id.txt_fecha_fin_solicitar_clase)
         var horaMinutos = findViewById<TextInputEditText>(R.id.txt_hora_solicitar_clase)
+        horaMinutos.inputType = InputType.TYPE_NULL
         val checkBoxDays = findViewById<HorizontalScrollView>(R.id.checkbox_days_solicitar_clase)
         val fechaFin = findViewById<RelativeLayout>(R.id.fecha_fin_solicitar_clase)
         val precioClase = findViewById<TextInputEditText>(R.id.txt_precio_solicitar_clase)
